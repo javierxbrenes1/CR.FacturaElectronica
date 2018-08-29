@@ -1,0 +1,30 @@
+{
+  "Nombre": "abc",
+  "NombreComercial": "xyz",
+  "Identificacion": "xxxxxxx",
+  "TipoIdentificacion": "01",
+  "CorreoElectronico": "x@x.com",
+  "Telefono": {
+    "CodigoArea": "506",
+    "Numero": "123321"
+  },
+  "Fax": {
+    "CodigoArea": "506",
+    "Numero": "25368096"
+  },
+  "Provincia": "03",
+  "Canton": "4",
+  "Distrito": "1",
+  "OtrasSennas": "Direccion",
+  "IdpUsuario": "",
+  "IdpContrasenna": "",
+  "UrlIdpLogIn": "",
+  "UrlIdpLogOut": "",
+  "ApiHacienda": "",
+  "LlaveCriptograficaNombre": "",
+  "LlaveCriptograficaClave": "",
+  "PolicyHash": "",
+  "RutaXMLRespaldos": "",
+  "AlmacenarXMLsEnRutaRespaldos": "True"
+}
+

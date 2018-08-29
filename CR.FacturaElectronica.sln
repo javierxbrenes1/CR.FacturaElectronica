@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27703.2035
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CR.FacturaElectronica", "CR.FacturaElectronica\CR.FacturaElectronica.csproj", "{829E2333-A3AA-4159-A124-59549E38E12B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CR.FacturaElectronica.AD", "CR.FacturaElectronica.AD\CR.FacturaElectronica.AD.csproj", "{1AE5BC69-9FA0-4903-9643-D106B3164CC9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{829E2333-A3AA-4159-A124-59549E38E12B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{829E2333-A3AA-4159-A124-59549E38E12B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{829E2333-A3AA-4159-A124-59549E38E12B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1AE5BC69-9FA0-4903-9643-D106B3164CC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1AE5BC69-9FA0-4903-9643-D106B3164CC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1AE5BC69-9FA0-4903-9643-D106B3164CC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1AE5BC69-9FA0-4903-9643-D106B3164CC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

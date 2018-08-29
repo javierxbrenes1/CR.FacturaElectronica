@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>829e2333-a3aa-4159-a124-59549e38e12b</ProjectGuid>
+    <ProjectGuid>{829E2333-A3AA-4159-A124-59549E38E12B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CR.FacturaElectronica</RootNamespace>
@@ -30,24 +30,74 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System"/>
-    
-    <Reference Include="System.Core"/>
-    <Reference Include="System.Xml.Linq"/>
-    <Reference Include="System.Data.DataSetExtensions"/>
-    
-    
-    <Reference Include="Microsoft.CSharp"/>
-    
-    <Reference Include="System.Data"/>
-    
-    <Reference Include="System.Net.Http"/>
-    
-    <Reference Include="System.Xml"/>
+    <Reference Include="FirmaXadesNet, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\Debug\FirmaXadesNet.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Entidades\Configuracion.cs" />
+    <Compile Include="Entidades\DocumentoParametros.cs" />
+    <Compile Include="Entidades\DocumentoReferencia.cs" />
+    <Compile Include="Entidades\Encabezado.cs" />
+    <Compile Include="Entidades\Impuesto.cs" />
+    <Compile Include="Entidades\Persona.cs" />
+    <Compile Include="Entidades\Producto.cs" />
+    <Compile Include="Entidades\Resumen.cs" />
+    <Compile Include="Entidades\Telefono.cs" />
+    <Compile Include="Interfaces\IDocumento.cs" />
+    <Compile Include="Interfaces\IGeneradorDocumentos.cs" />
+    <Compile Include="Procesos\Factura\FacturaElectronicaProcesador.cs" />
+    <Compile Include="Procesos\Factura\FacturaElectronica_FR.cs">
+      <DependentUpon>FacturaElectronica_FR.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Procesos\Mensaje_Receptor\MensajeReceptor.cs" />
+    <Compile Include="Procesos\Mensaje_Receptor\MensajeReceptorProcesador.cs" />
+    <Compile Include="Procesos\Nota_Credito\NotaCreditoElectronica_FR.cs">
+      <DependentUpon>NotaCreditoElectronica_FR.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Procesos\Nota_Credito\NotaCreditoProcesador.cs" />
+    <Compile Include="Procesos\Nota_Debito\NotaDebitoElectronica_FR.cs">
+      <DependentUpon>NotaDebitoElectronica_FR.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Procesos\Nota_Debito\NotaDebitoProcesador.cs" />
+    <Compile Include="Procesos\Tiquete\TiqueteElectronico_FR.cs">
+      <DependentUpon>TiqueteElectronico_FR.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="Procesos\Tiquete\TiqueteProcesador.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shared\ModFunciones.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Hacienda\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Procesos\Factura\FacturaElectronica_FR.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Procesos\Mensaje_Receptor\MensajeReceptor_4.2.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Procesos\Nota_Credito\NotaCreditoElectronica_FR.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Procesos\Nota_Debito\NotaDebitoElectronica_FR.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Procesos\Tiquete\TiqueteElectronico_FR.xsd">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
- </Project>
+</Project>
