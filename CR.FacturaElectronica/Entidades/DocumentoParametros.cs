@@ -20,12 +20,14 @@ namespace CR.FacturaElectronica.Entidades
 
         public int Terminal { get; set; }
         public int Sucursal { get; set; }
-        public long ConsecutivoDocumento { get; set; }
+        public long ConsecutivoSistema { get; set; }
         public enmTipoDocumento TipoDocumento { get; set; }
 
         public Encabezado Encabezado { get; set; }
         public List<LineaDetalle> LineasDetalle { get; set; }
         public Resumen Resumen { get; set; }
-        public DocumentoReferencia DocumentoReferencia { get; set; }
+        public List<DocumentoReferencia> DocumentosReferencia { get; set; }
+
+        public  bool EsUnReproceso { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CR.FacturaElectronica.Entidades;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace CR.FacturaElectronica.Interfaces
 {
    public interface IGeneradorDocumentos
     {
-        string GenerarDocumentoXML();
-        Task<string> GenerarDocumentoXMLAsync();
+        RespuestaCreacionDoc GenerarDocumentoXML(DocumentoParametros documentoParametros);
     }
 }
+ 

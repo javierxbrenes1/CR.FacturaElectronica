@@ -8,14 +8,13 @@ using System.Xml;
 using CR.FacturaElectronica.Entidades;
 using CR.FacturaElectronica.Shared;
 
-namespace CR.FacturaElectronica.Factura
+namespace CR.FacturaElectronica.Nota_Debito
 {
-    internal class FacturaElectronicaProcesador :IDocumento
+    public class NotaDebitoProcesador : IGeneradorDocumento
     {
         #region Propiedades
 
-
- 
+        
 
         public List<LineaDetalle> Productos { get; set; }
 
@@ -29,33 +28,33 @@ namespace CR.FacturaElectronica.Factura
 
         #region Funciones
 
-        
+  
+
         // Obtiene la lista de detalles
-        private FacturaElectronicaLineaDetalle[] ObtenerDetalle(List<LineaDetalle> pvoListaProductos)
+        private NotaDebitoElectronicaLineaDetalle[] ObtenerDetalle(List<LineaDetalle> pvoListaProductos)
         {
 
-            FacturaElectronicaLineaDetalle[] vloArrProductosNodos;
-            FacturaElectronicaLineaDetalle vloProductoNodo;
+            NotaDebitoElectronicaLineaDetalle[] vloArrProductosNodos;
+            NotaDebitoElectronicaLineaDetalle vloProductoNodo;
             LineaDetalle vloProducto;
             Impuesto vloImp;
-            try
+             try
             {
-               //Define el total de productos
                 //Encabezado.TotalLineasDetalle = Encabezado.TotalLineasDetalle > pvoListaProductos.Count ? pvoListaProductos.Count : Encabezado.TotalLineasDetalle;
                 //Agrega el nodo padre
-                vloArrProductosNodos = new FacturaElectronicaLineaDetalle[pvoListaProductos.Count];
+                vloArrProductosNodos = new NotaDebitoElectronicaLineaDetalle[pvoListaProductos.Count];
                 //Recorre la lista de los articulos
                 for (int vlnI = 0; vlnI < pvoListaProductos.Count; vlnI++)
                 {
                     //Obtengo el producto
                     vloProducto = pvoListaProductos[vlnI];
                     //Creo el campo linea de detalle
-                    vloProductoNodo = new FacturaElectronicaLineaDetalle();
+                    vloProductoNodo = new NotaDebitoElectronicaLineaDetalle();
                     //Agrego el numero de linea
                     vloProductoNodo.NumeroLinea = (vlnI + 1).ToString();
                     //Agrego el codigo 
                     vloProductoNodo.Codigo = new CodigoType[1];
-                    vloProductoNodo.Codigo[0] = new CodigoType() { Tipo = ObtenerTipoCodigoProducto(vloProducto.tipoCodigo), Codigo = vloProducto.Codigo };
+                    vloProductoNodo.Codigo[0] = new CodigoType() { Tipo = ObtenerTipoCodigoProd(vloProducto.tipoCodigo), Codigo = vloProducto.Codigo };
                     //Agrego la cantidad de productos 
                     vloProductoNodo.Cantidad = vloProducto.Cantidad;
                     //Agrego la unidad de medida
@@ -77,12 +76,10 @@ namespace CR.FacturaElectronica.Factura
 
                     //Agrega el monto del descuento
                     vloProductoNodo.MontoDescuento = vloProducto.MontoDescuento;
-                    //<JBR08012018 >
-                    vloProductoNodo.MontoDescuentoSpecified = vloProducto.MostrarDescuento;//(vloProducto.MontoDescuento > 0);
+                    vloProductoNodo.MontoDescuentoSpecified = vloProducto.MostrarDescuento;
                     //Agrega la naturaleza del descuento 
                     vloProductoNodo.NaturalezaDescuento = vloProducto.NaturalezaDescuento;
                     vloProductoNodo.NaturalezaDescuentoSpecified = vloProducto.MostrarDescuento;
-                    //</JBR08012018>
                     //Agrega el subtotal 
                     vloProductoNodo.SubTotal = vloProducto.SubTotal;
 
@@ -102,7 +99,7 @@ namespace CR.FacturaElectronica.Factura
                         {
                             //Agrego la exoneracion
                             vloProductoNodo.Impuesto[vlnJ].Exoneracion = new ExoneracionType();
-                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.TipoDocumento = ObtenerTipoDocumento(vloProducto.TipoDocumento);
+                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.TipoDocumento = ObtenerTipoDocumentoExoneracion(vloProducto.TipoDocumento);
                             vloProductoNodo.Impuesto[vlnJ].Exoneracion.NumeroDocumento = vloProducto.NumeroDocumento;
                             vloProductoNodo.Impuesto[vlnJ].Exoneracion.FechaEmision = vloProducto.FechaEmision;
                             vloProductoNodo.Impuesto[vlnJ].Exoneracion.MontoImpuesto = vloProducto.MontoImpuestoExon;
@@ -127,22 +124,24 @@ namespace CR.FacturaElectronica.Factura
                 throw;
             }
         }
-        
+
+       
+
         // Obtiene el resumen del detalle
-        private FacturaElectronicaResumenFactura ObtenerResumen()
+        private NotaDebitoElectronicaResumenFactura ObtenerResumen()
         {
-            FacturaElectronicaResumenFactura vloResumen;
+            NotaDebitoElectronicaResumenFactura vloResumen;
             try
             {
-                vloResumen = new FacturaElectronicaResumenFactura();
+                vloResumen = new NotaDebitoElectronicaResumenFactura();
                 //Agrega la moneda
                 try
                 {
-                    vloResumen.CodigoMoneda = (FacturaElectronicaResumenFacturaCodigoMoneda)Enum.Parse(typeof(FacturaElectronicaResumenFacturaCodigoMoneda), Resumen.Moneda);
+                    vloResumen.CodigoMoneda = (NotaDebitoElectronicaResumenFacturaCodigoMoneda)Enum.Parse(typeof(NotaDebitoElectronicaResumenFacturaCodigoMoneda), Resumen.Moneda);
                 }
                 catch (Exception)
                 {
-                    vloResumen.CodigoMoneda = FacturaElectronicaResumenFacturaCodigoMoneda.CRC;
+                    vloResumen.CodigoMoneda = NotaDebitoElectronicaResumenFacturaCodigoMoneda.CRC;
                 }
                 vloResumen.CodigoMonedaSpecified = true;
                 vloResumen.TipoCambio = Resumen.TipoCambio;
@@ -185,46 +184,10 @@ namespace CR.FacturaElectronica.Factura
             }
         }
 
-        // Obtiene la lista de detalles
-        private FacturaElectronicaInformacionReferencia[] ObtenerReferencia()
-        {
-            FacturaElectronicaInformacionReferencia[] vloReferenciaArr = null;
-            FacturaElectronicaInformacionReferencia vloReferencia;
-            try
-            {
-                //Valido si el objeto trae documentos
-                if (DocsReferencia != null && DocsReferencia.Length > 0)
-                {
-                    vloReferenciaArr = new FacturaElectronicaInformacionReferencia[DocsReferencia.Length];
-                    //Recorro los documentos enviados
-                    for (int vlnI = 0; vlnI < DocsReferencia.Length; vlnI++)
-                    {
-                        //Creo una nueva instancia 
-                        vloReferencia = new FacturaElectronicaInformacionReferencia();
-                        //Asigno los parametros
-                        vloReferencia.Codigo = DefinirCodigoReferencia(DocsReferencia[vlnI].Codigo);
-                        vloReferencia.TipoDoc = DefinirReferenciaTipoDoc(DocsReferencia[vlnI].TipoDoc);
-                        vloReferencia.FechaEmision = DocsReferencia[vlnI].FechaEmision;
-                        vloReferencia.Numero = DocsReferencia[vlnI].Numero;
-                        vloReferencia.Razon = DocsReferencia[vlnI].Razon;
-                        //Lo agrego al arreglo
-                        vloReferenciaArr[vlnI] = vloReferencia;
-                    }
-                }
-                return vloReferenciaArr;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-
-        }
-
         // Retorna la ruta donde creo el archivo
         public string CrearXML()
         {
-            FacturaElectronica vloTiquete = new FacturaElectronica();
+            NotaDebitoElectronica vloTiquete = new NotaDebitoElectronica();
             int vlnContador = 0;
 
             try
@@ -310,7 +273,6 @@ namespace CR.FacturaElectronica.Factura
                         };
                     }
 
-
                     //Si hay provincia
                     if (!string.IsNullOrEmpty(Encabezado.Receptor.Provincia))
                     {
@@ -321,13 +283,14 @@ namespace CR.FacturaElectronica.Factura
                         if (!string.IsNullOrEmpty(Encabezado.Receptor.Barrio)) vloTiquete.Receptor.Ubicacion.Barrio = Encabezado.Receptor.Barrio;
                         vloTiquete.Receptor.Ubicacion.OtrasSenas = Encabezado.Receptor.OtrasSennas;
                     }
+
                 }
                 //condicion de venta
                 vloTiquete.CondicionVenta = ObtenerCondicionVenta(Encabezado.CondicionVenta);
                 //Plazo
                 vloTiquete.PlazoCredito = Encabezado.PlazoCredito;
                 //Medios de pago 
-                vloTiquete.MedioPago = new FacturaElectronicaMedioPago[Encabezado.MediosPago.Length];
+                vloTiquete.MedioPago = new NotaDebitoElectronicaMedioPago[Encabezado.MediosPago.Length];
                 foreach (string vlcMedio in Encabezado.MediosPago)
                 {
                     vloTiquete.MedioPago[vlnContador] = ObtenerMedioPago(vlcMedio);
@@ -337,21 +300,21 @@ namespace CR.FacturaElectronica.Factura
                 vloTiquete.DetalleServicio = ObtenerDetalle(Productos);
                 //Resumen de factura
                 vloTiquete.ResumenFactura = ObtenerResumen();
-
-                //Obtiene referencias
+                //Define referencias
                 vloTiquete.InformacionReferencia = ObtenerReferencia();
-
                 //Agrega la normativa
-                vloTiquete.Normativa = new FacturaElectronicaNormativa();
+                vloTiquete.Normativa = new NotaDebitoElectronicaNormativa();
                 //Agrega el nombre de la normativa
                 vloTiquete.Normativa.NumeroResolucion = Encabezado.NormativaNombre;
                 //Agrega la fecha
                 vloTiquete.Normativa.FechaResolucion = Encabezado.NormativaFecha;
 
-                vloTiquete.Otros = new FacturaElectronicaOtros();
-                vloTiquete.Otros.OtroTexto = new FacturaElectronicaOtrosOtroTexto[1];
-                //vloTiquete.Otros.OtroTexto[0] = new FacturaElectronicaOtrosOtroTexto() { codigo = "00", Value = IdTransaccion };
-                //Retorna el texto
+                
+
+                vloTiquete.Otros = new NotaDebitoElectronicaOtros();
+                vloTiquete.Otros.OtroTexto = new NotaDebitoElectronicaOtrosOtroTexto[1];
+                //vloTiquete.Otros.OtroTexto[0] = new NotaDebitoElectronicaOtrosOtroTexto() { codigo = "00", Value = IdTransaccion };
+                //Crea la ruta
                 return fcObtenerStringXML(vloTiquete);
 
 
@@ -363,13 +326,49 @@ namespace CR.FacturaElectronica.Factura
             }
         }
 
+        // Obtiene la lista de detalles
+        private NotaDebitoElectronicaInformacionReferencia[] ObtenerReferencia()
+        {
+            NotaDebitoElectronicaInformacionReferencia[] vloReferenciaArr = null;
+            NotaDebitoElectronicaInformacionReferencia vloReferencia;
+            try
+            {
+                //Valido si el objeto trae documentos
+                if (DocsReferencia != null && DocsReferencia.Length > 0)
+                {
+                    vloReferenciaArr = new NotaDebitoElectronicaInformacionReferencia[DocsReferencia.Length];
+                    //Recorro los documentos enviados
+                    for (int vlnI = 0; vlnI < DocsReferencia.Length; vlnI++)
+                    {
+                        //Creo una nueva instancia 
+                        vloReferencia = new NotaDebitoElectronicaInformacionReferencia();
+                        //Asigno los parametros
+                        vloReferencia.Codigo = DefinirCodigoReferencia(DocsReferencia[vlnI].Codigo);
+                        vloReferencia.TipoDoc = DefinirReferenciaTipoDoc(DocsReferencia[vlnI].TipoDoc);
+                        vloReferencia.FechaEmision = DocsReferencia[vlnI].FechaEmision;
+                        vloReferencia.Numero = DocsReferencia[vlnI].Numero;
+                        vloReferencia.Razon = DocsReferencia[vlnI].Razon;
+                        //Lo agrego al arreglo
+                        vloReferenciaArr[vlnI] = vloReferencia;
+                    }
+                }
+                return vloReferenciaArr;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+
         // Guarda el XML en un archivo fisico
-        public string fcObtenerStringXML(FacturaElectronica pvoTiquete)
+        public string fcObtenerStringXML(NotaDebitoElectronica pvoTiquete)
         {
             try
             {
                 //Crea Objeto serializador
-                XmlSerializer vloSerializador = new XmlSerializer(typeof(FacturaElectronica));
+                XmlSerializer vloSerializador = new XmlSerializer(typeof(NotaDebitoElectronica));
                 //Define las configuraciones
                 XmlWriterSettings vloConfiguraciones = new XmlWriterSettings();
                 //Asinga los valores
@@ -394,34 +393,35 @@ namespace CR.FacturaElectronica.Factura
             }
         }
 
-        private FacturaElectronicaCondicionVenta ObtenerCondicionVenta(string vlcCondicionVenta)
+
+        private NotaDebitoElectronicaCondicionVenta ObtenerCondicionVenta(string vlcCondicionVenta)
         {
-            FacturaElectronicaCondicionVenta vloValor;
+            NotaDebitoElectronicaCondicionVenta vloValor;
             try
             {
 
                 switch (vlcCondicionVenta)
                 {
                     case "01":
-                        vloValor = FacturaElectronicaCondicionVenta.Item01;
+                        vloValor = NotaDebitoElectronicaCondicionVenta.Item01;
                         break;
                     case "02":
-                        vloValor = FacturaElectronicaCondicionVenta.Item02;
+                        vloValor = NotaDebitoElectronicaCondicionVenta.Item02;
                         break;
                     case "03":
-                        vloValor = FacturaElectronicaCondicionVenta.Item03;
+                        vloValor = NotaDebitoElectronicaCondicionVenta.Item03;
                         break;
                     case "04":
-                        vloValor = FacturaElectronicaCondicionVenta.Item04;
+                        vloValor = NotaDebitoElectronicaCondicionVenta.Item04;
                         break;
                     case "05":
-                        vloValor = FacturaElectronicaCondicionVenta.Item05;
+                        vloValor = NotaDebitoElectronicaCondicionVenta.Item05;
                         break;
                     case "06":
-                        vloValor = FacturaElectronicaCondicionVenta.Item06;
+                        vloValor = NotaDebitoElectronicaCondicionVenta.Item06;
                         break;
                     default:
-                        vloValor = FacturaElectronicaCondicionVenta.Item99;
+                        vloValor = NotaDebitoElectronicaCondicionVenta.Item99;
                         break;
                 }
                 return vloValor;
@@ -433,30 +433,30 @@ namespace CR.FacturaElectronica.Factura
             }
         }
 
-        private FacturaElectronicaMedioPago ObtenerMedioPago(string vlcMedioPago)
+        private NotaDebitoElectronicaMedioPago ObtenerMedioPago(string vlcMedioPago)
         {
-            FacturaElectronicaMedioPago vloValor;
+            NotaDebitoElectronicaMedioPago vloValor;
             try
             {
                 switch (vlcMedioPago)
                 {
                     case "01":
-                        vloValor = FacturaElectronicaMedioPago.Item01;
+                        vloValor = NotaDebitoElectronicaMedioPago.Item01;
                         break;
                     case "02":
-                        vloValor = FacturaElectronicaMedioPago.Item02;
+                        vloValor = NotaDebitoElectronicaMedioPago.Item02;
                         break;
                     case "03":
-                        vloValor = FacturaElectronicaMedioPago.Item03;
+                        vloValor = NotaDebitoElectronicaMedioPago.Item03;
                         break;
                     case "04":
-                        vloValor = FacturaElectronicaMedioPago.Item04;
+                        vloValor = NotaDebitoElectronicaMedioPago.Item04;
                         break;
                     case "05":
-                        vloValor = FacturaElectronicaMedioPago.Item05;
+                        vloValor = NotaDebitoElectronicaMedioPago.Item05;
                         break;
                     default:
-                        vloValor = FacturaElectronicaMedioPago.Item99;
+                        vloValor = NotaDebitoElectronicaMedioPago.Item99;
                         break;
 
                 }
@@ -469,7 +469,7 @@ namespace CR.FacturaElectronica.Factura
             }
         }
 
-        private ExoneracionTypeTipoDocumento ObtenerTipoDocumento(string pvcTipoDoc)
+        private ExoneracionTypeTipoDocumento ObtenerTipoDocumentoExoneracion(string pvcTipoDoc)
         {
             ExoneracionTypeTipoDocumento vloValor;
             try
@@ -504,7 +504,7 @@ namespace CR.FacturaElectronica.Factura
             }
         }
 
-        private ImpuestoTypeCodigo ObtenerCodigoImpuesto(string pvcCodigo)
+        private  ImpuestoTypeCodigo ObtenerCodigoImpuesto(string pvcCodigo)
         {
             ImpuestoTypeCodigo vloValor;
             try
@@ -557,7 +557,7 @@ namespace CR.FacturaElectronica.Factura
             }
         }
 
-        private CodigoTypeTipo ObtenerTipoCodigoProducto(string pvcTipocodigo)
+        private CodigoTypeTipo ObtenerTipoCodigoProd(string pvcTipocodigo)
         {
             CodigoTypeTipo vloValor;
             try
@@ -623,43 +623,43 @@ namespace CR.FacturaElectronica.Factura
             }
         }
 
-        private FacturaElectronicaInformacionReferenciaTipoDoc DefinirReferenciaTipoDoc(string pvcTipoDocRef)
+        private NotaDebitoElectronicaInformacionReferenciaTipoDoc DefinirReferenciaTipoDoc(string pvcTipoDocRef)
         {
-            FacturaElectronicaInformacionReferenciaTipoDoc vloRes;
+            NotaDebitoElectronicaInformacionReferenciaTipoDoc vloRes;
             try
             {
                 switch (pvcTipoDocRef)
                 {
                     /// <comentarios/>
                     case "01":
-                        vloRes = FacturaElectronicaInformacionReferenciaTipoDoc.Item01;
+                        vloRes = NotaDebitoElectronicaInformacionReferenciaTipoDoc.Item01;
                         break;
                     case "02":
-                        vloRes = FacturaElectronicaInformacionReferenciaTipoDoc.Item02;
+                        vloRes = NotaDebitoElectronicaInformacionReferenciaTipoDoc.Item02;
                         break;
                     case "03":
-                        vloRes = FacturaElectronicaInformacionReferenciaTipoDoc.Item03;
+                        vloRes = NotaDebitoElectronicaInformacionReferenciaTipoDoc.Item03;
                         break;
                     case "04":
-                        vloRes = FacturaElectronicaInformacionReferenciaTipoDoc.Item04;
+                        vloRes = NotaDebitoElectronicaInformacionReferenciaTipoDoc.Item04;
                         break;
                     case "05":
-                        vloRes = FacturaElectronicaInformacionReferenciaTipoDoc.Item05;
+                        vloRes = NotaDebitoElectronicaInformacionReferenciaTipoDoc.Item05;
                         break;
                     case "06":
-                        vloRes = FacturaElectronicaInformacionReferenciaTipoDoc.Item06;
+                        vloRes = NotaDebitoElectronicaInformacionReferenciaTipoDoc.Item06;
                         break;
                     case "07":
-                        vloRes = FacturaElectronicaInformacionReferenciaTipoDoc.Item07;
+                        vloRes = NotaDebitoElectronicaInformacionReferenciaTipoDoc.Item07;
                         break;
                     case "08":
-                        vloRes = FacturaElectronicaInformacionReferenciaTipoDoc.Item08;
+                        vloRes = NotaDebitoElectronicaInformacionReferenciaTipoDoc.Item08;
                         break;
                     default:
-                        vloRes = FacturaElectronicaInformacionReferenciaTipoDoc.Item99;
+                        vloRes = NotaDebitoElectronicaInformacionReferenciaTipoDoc.Item99;
                         break;
                 }
-                return vloRes;
+                return vloRes; 
             }
             catch (Exception)
             {
@@ -669,30 +669,30 @@ namespace CR.FacturaElectronica.Factura
             
         }
 
-        private FacturaElectronicaInformacionReferenciaCodigo DefinirCodigoReferencia(string pvcCodigo)
+        private NotaDebitoElectronicaInformacionReferenciaCodigo DefinirCodigoReferencia(string pvcCodigo)
         {
-            FacturaElectronicaInformacionReferenciaCodigo vloRes;
+            NotaDebitoElectronicaInformacionReferenciaCodigo vloRes;
             try
             {
                 switch (pvcCodigo)
                 {
                     case "01":
-                        vloRes = FacturaElectronicaInformacionReferenciaCodigo.Item01;
+                        vloRes = NotaDebitoElectronicaInformacionReferenciaCodigo.Item01;
                         break;
                     case "02":
-                        vloRes = FacturaElectronicaInformacionReferenciaCodigo.Item02;
+                        vloRes = NotaDebitoElectronicaInformacionReferenciaCodigo.Item02;
                         break;
                     case "03":
-                        vloRes = FacturaElectronicaInformacionReferenciaCodigo.Item03;
+                        vloRes = NotaDebitoElectronicaInformacionReferenciaCodigo.Item03;
                         break;
                     case "04":
-                        vloRes = FacturaElectronicaInformacionReferenciaCodigo.Item04;
+                        vloRes = NotaDebitoElectronicaInformacionReferenciaCodigo.Item04;
                         break;
                     case "05":
-                        vloRes = FacturaElectronicaInformacionReferenciaCodigo.Item05;
+                        vloRes = NotaDebitoElectronicaInformacionReferenciaCodigo.Item05;
                         break;
                     default:
-                        vloRes = FacturaElectronicaInformacionReferenciaCodigo.Item99;
+                        vloRes = NotaDebitoElectronicaInformacionReferenciaCodigo.Item99;
                         break;
                 }
                 return vloRes;
@@ -703,6 +703,7 @@ namespace CR.FacturaElectronica.Factura
                 throw;
             }
         }
+
         #endregion
     }
 }

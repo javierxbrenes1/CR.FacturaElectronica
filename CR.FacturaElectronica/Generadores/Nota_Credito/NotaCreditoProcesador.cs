@@ -2,19 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Data;
 using System.IO;
 using System.Xml.Serialization;
 using System.Xml;
 using CR.FacturaElectronica.Entidades;
 using CR.FacturaElectronica.Shared;
 
-namespace CR.FacturaElectronica.Nota_Debito
+namespace CR.FacturaElectronica.Nota_Credito
 {
-    public class NotaDebitoProcesador : IDocumento
+    internal class NotaCreditoProcesador : IGeneradorDocumento
     {
+
         #region Propiedades
 
-        
+
+      
 
         public List<LineaDetalle> Productos { get; set; }
 
@@ -27,167 +31,13 @@ namespace CR.FacturaElectronica.Nota_Debito
         #endregion
 
         #region Funciones
+        
 
-  
-
-        // Obtiene la lista de detalles
-        private NotaDebitoElectronicaLineaDetalle[] ObtenerDetalle(List<LineaDetalle> pvoListaProductos)
-        {
-
-            NotaDebitoElectronicaLineaDetalle[] vloArrProductosNodos;
-            NotaDebitoElectronicaLineaDetalle vloProductoNodo;
-            LineaDetalle vloProducto;
-            Impuesto vloImp;
-             try
-            {
-                //Encabezado.TotalLineasDetalle = Encabezado.TotalLineasDetalle > pvoListaProductos.Count ? pvoListaProductos.Count : Encabezado.TotalLineasDetalle;
-                //Agrega el nodo padre
-                vloArrProductosNodos = new NotaDebitoElectronicaLineaDetalle[pvoListaProductos.Count];
-                //Recorre la lista de los articulos
-                for (int vlnI = 0; vlnI < pvoListaProductos.Count; vlnI++)
-                {
-                    //Obtengo el producto
-                    vloProducto = pvoListaProductos[vlnI];
-                    //Creo el campo linea de detalle
-                    vloProductoNodo = new NotaDebitoElectronicaLineaDetalle();
-                    //Agrego el numero de linea
-                    vloProductoNodo.NumeroLinea = (vlnI + 1).ToString();
-                    //Agrego el codigo 
-                    vloProductoNodo.Codigo = new CodigoType[1];
-                    vloProductoNodo.Codigo[0] = new CodigoType() { Tipo = ObtenerTipoCodigoProd(vloProducto.tipoCodigo), Codigo = vloProducto.Codigo };
-                    //Agrego la cantidad de productos 
-                    vloProductoNodo.Cantidad = vloProducto.Cantidad;
-                    //Agrego la unidad de medida
-                    try
-                    {
-                        vloProductoNodo.UnidadMedida = (UnidadMedidaType)Enum.Parse(typeof(UnidadMedidaType), vloProducto.UnidadMedida);
-                    }
-                    catch (Exception)
-                    {
-                        vloProductoNodo.UnidadMedida = UnidadMedidaType.Unid;
-                    }
-                    //Agrego el nombre del producto 
-                    vloProductoNodo.Detalle = ModFunciones.RemplazarCaracteresHTML(vloProducto.Detalle);
-                    //Agrega el precio unitario
-                    vloProductoNodo.PrecioUnitario = vloProducto.PrecioUnitario;
-
-                    //Agrega el monto total 
-                    vloProductoNodo.MontoTotal = vloProducto.MontoTotal;
-
-                    //Agrega el monto del descuento
-                    vloProductoNodo.MontoDescuento = vloProducto.MontoDescuento;
-                    vloProductoNodo.MontoDescuentoSpecified = vloProducto.MostrarDescuento;
-                    //Agrega la naturaleza del descuento 
-                    vloProductoNodo.NaturalezaDescuento = vloProducto.NaturalezaDescuento;
-                    vloProductoNodo.NaturalezaDescuentoSpecified = vloProducto.MostrarDescuento;
-                    //Agrega el subtotal 
-                    vloProductoNodo.SubTotal = vloProducto.SubTotal;
-
-                    /****** Se agregan los campos de exoneracion luego se validan si van o no *******/
-
-                    //Agrego los impuestos
-                    vloProductoNodo.Impuesto = new ImpuestoType[vloProducto.Impuestos.Count];
-
-                    //Se agregan los impuestos
-                    for (int vlnJ = 0; vlnJ < vloProducto.Impuestos.Count; vlnJ++)
-                    {
-                        vloImp = vloProducto.Impuestos[vlnJ];
-                        vloProductoNodo.Impuesto[vlnJ] = new ImpuestoType() { Codigo = ObtenerCodigoImpuesto(vloImp.CodigoImpuesto), Tarifa = vloImp.Tarifa, Monto = vloImp.MontoImpuesto };
-
-                        //Validar
-                        if (vloProducto.Exonerado)
-                        {
-                            //Agrego la exoneracion
-                            vloProductoNodo.Impuesto[vlnJ].Exoneracion = new ExoneracionType();
-                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.TipoDocumento = ObtenerTipoDocumentoExoneracion(vloProducto.TipoDocumento);
-                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.NumeroDocumento = vloProducto.NumeroDocumento;
-                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.FechaEmision = vloProducto.FechaEmision;
-                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.MontoImpuesto = vloProducto.MontoImpuestoExon;
-                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.PorcentajeCompra = Convert.ToInt32(vloProducto.PorcentajeCompra).ToString();
-                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.NombreInstitucion = vloProducto.NombreInstitucion;
-                        }
-                    }
-
-                    //Agrega el monto total del producto
-                    vloProductoNodo.MontoTotalLinea = vloProducto.MontoTotalLinea;
-                    //Redondea el producto
-                    //pRedondearMontos(ref vloProductoNodo, vlnParamTotalDecimales);
-                    //Agrega el producto 
-                    vloArrProductosNodos[vlnI] = vloProductoNodo;
-
-                }
-                return vloArrProductosNodos;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
-       
-
-        // Obtiene el resumen del detalle
-        private NotaDebitoElectronicaResumenFactura ObtenerResumen()
-        {
-            NotaDebitoElectronicaResumenFactura vloResumen;
-            try
-            {
-                vloResumen = new NotaDebitoElectronicaResumenFactura();
-                //Agrega la moneda
-                try
-                {
-                    vloResumen.CodigoMoneda = (NotaDebitoElectronicaResumenFacturaCodigoMoneda)Enum.Parse(typeof(NotaDebitoElectronicaResumenFacturaCodigoMoneda), Resumen.Moneda);
-                }
-                catch (Exception)
-                {
-                    vloResumen.CodigoMoneda = NotaDebitoElectronicaResumenFacturaCodigoMoneda.CRC;
-                }
-                vloResumen.CodigoMonedaSpecified = true;
-                vloResumen.TipoCambio = Resumen.TipoCambio;
-                vloResumen.TipoCambioSpecified = true;
-                vloResumen.TotalServGravados = Resumen.TotalServGravados;
-                vloResumen.TotalServGravadosSpecified = true;
-                //Agrega la etiqueta para total de servicios exentos
-                vloResumen.TotalServExentos = Resumen.TotalServExentos;
-                vloResumen.TotalServExentosSpecified = true;
-                //Agrega la etiqueta para total de mercaderias gravadas
-                vloResumen.TotalMercanciasGravadas = Resumen.TotalMercanciasGravadas;
-                vloResumen.TotalMercanciasGravadasSpecified = true;
-                //Agrega la etiqueta para total de mercaderias exentas
-                vloResumen.TotalMercanciasExentas = Resumen.TotalMercanciasExentas;
-                vloResumen.TotalMercanciasExentasSpecified = true;
-                //Agrega la etiqueta para total gravado
-                vloResumen.TotalGravado = Resumen.TotalGravado;
-                vloResumen.TotalGravadoSpecified = true;
-                //Agrega la etiqueta para total exento
-                vloResumen.TotalExento = Resumen.TotalExento;
-                vloResumen.TotalExentoSpecified = true;
-                //Agrega la etiqueta para total de venta
-                vloResumen.TotalVenta = Resumen.TotalVenta;
-                //Agrega la etiqueta para total de descuentos
-                vloResumen.TotalDescuentos = Resumen.TotalDescuentos;
-                vloResumen.TotalDescuentosSpecified = true;
-                //Agrega la etiqueta para total venta neta
-                vloResumen.TotalVentaNeta = Resumen.TotalVentaNeta;
-                //Obtengo el total de impuestos
-                vloResumen.TotalImpuesto = Resumen.TotalImpuesto;
-                vloResumen.TotalImpuestoSpecified = true;
-                //Agrega el total de la factura
-                vloResumen.TotalComprobante = Resumen.TotalComprobante;
-                return vloResumen;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
+        // Retorna la ruta donde creo el archivo
         // Retorna la ruta donde creo el archivo
         public string CrearXML()
         {
-            NotaDebitoElectronica vloTiquete = new NotaDebitoElectronica();
+            NotaCreditoElectronica vloTiquete = new NotaCreditoElectronica();
             int vlnContador = 0;
 
             try
@@ -273,6 +123,7 @@ namespace CR.FacturaElectronica.Nota_Debito
                         };
                     }
 
+
                     //Si hay provincia
                     if (!string.IsNullOrEmpty(Encabezado.Receptor.Provincia))
                     {
@@ -283,14 +134,13 @@ namespace CR.FacturaElectronica.Nota_Debito
                         if (!string.IsNullOrEmpty(Encabezado.Receptor.Barrio)) vloTiquete.Receptor.Ubicacion.Barrio = Encabezado.Receptor.Barrio;
                         vloTiquete.Receptor.Ubicacion.OtrasSenas = Encabezado.Receptor.OtrasSennas;
                     }
-
                 }
                 //condicion de venta
                 vloTiquete.CondicionVenta = ObtenerCondicionVenta(Encabezado.CondicionVenta);
                 //Plazo
                 vloTiquete.PlazoCredito = Encabezado.PlazoCredito;
                 //Medios de pago 
-                vloTiquete.MedioPago = new NotaDebitoElectronicaMedioPago[Encabezado.MediosPago.Length];
+                vloTiquete.MedioPago = new NotaCreditoElectronicaMedioPago[Encabezado.MediosPago.Length];
                 foreach (string vlcMedio in Encabezado.MediosPago)
                 {
                     vloTiquete.MedioPago[vlnContador] = ObtenerMedioPago(vlcMedio);
@@ -300,20 +150,18 @@ namespace CR.FacturaElectronica.Nota_Debito
                 vloTiquete.DetalleServicio = ObtenerDetalle(Productos);
                 //Resumen de factura
                 vloTiquete.ResumenFactura = ObtenerResumen();
-                //Define referencias
+                //Obtiene referencias
                 vloTiquete.InformacionReferencia = ObtenerReferencia();
                 //Agrega la normativa
-                vloTiquete.Normativa = new NotaDebitoElectronicaNormativa();
+                vloTiquete.Normativa = new NotaCreditoElectronicaNormativa();
                 //Agrega el nombre de la normativa
                 vloTiquete.Normativa.NumeroResolucion = Encabezado.NormativaNombre;
                 //Agrega la fecha
                 vloTiquete.Normativa.FechaResolucion = Encabezado.NormativaFecha;
 
-                
-
-                vloTiquete.Otros = new NotaDebitoElectronicaOtros();
-                vloTiquete.Otros.OtroTexto = new NotaDebitoElectronicaOtrosOtroTexto[1];
-                //vloTiquete.Otros.OtroTexto[0] = new NotaDebitoElectronicaOtrosOtroTexto() { codigo = "00", Value = IdTransaccion };
+                vloTiquete.Otros = new NotaCreditoElectronicaOtros();
+                vloTiquete.Otros.OtroTexto = new NotaCreditoElectronicaOtrosOtroTexto[1];
+                //vloTiquete.Otros.OtroTexto[0] = new NotaCreditoElectronicaOtrosOtroTexto() { codigo = "00", Value = IdTransaccion };
                 //Crea la ruta
                 return fcObtenerStringXML(vloTiquete);
 
@@ -326,49 +174,13 @@ namespace CR.FacturaElectronica.Nota_Debito
             }
         }
 
-        // Obtiene la lista de detalles
-        private NotaDebitoElectronicaInformacionReferencia[] ObtenerReferencia()
-        {
-            NotaDebitoElectronicaInformacionReferencia[] vloReferenciaArr = null;
-            NotaDebitoElectronicaInformacionReferencia vloReferencia;
-            try
-            {
-                //Valido si el objeto trae documentos
-                if (DocsReferencia != null && DocsReferencia.Length > 0)
-                {
-                    vloReferenciaArr = new NotaDebitoElectronicaInformacionReferencia[DocsReferencia.Length];
-                    //Recorro los documentos enviados
-                    for (int vlnI = 0; vlnI < DocsReferencia.Length; vlnI++)
-                    {
-                        //Creo una nueva instancia 
-                        vloReferencia = new NotaDebitoElectronicaInformacionReferencia();
-                        //Asigno los parametros
-                        vloReferencia.Codigo = DefinirCodigoReferencia(DocsReferencia[vlnI].Codigo);
-                        vloReferencia.TipoDoc = DefinirReferenciaTipoDoc(DocsReferencia[vlnI].TipoDoc);
-                        vloReferencia.FechaEmision = DocsReferencia[vlnI].FechaEmision;
-                        vloReferencia.Numero = DocsReferencia[vlnI].Numero;
-                        vloReferencia.Razon = DocsReferencia[vlnI].Razon;
-                        //Lo agrego al arreglo
-                        vloReferenciaArr[vlnI] = vloReferencia;
-                    }
-                }
-                return vloReferenciaArr;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-
-        }
-
         // Guarda el XML en un archivo fisico
-        public string fcObtenerStringXML(NotaDebitoElectronica pvoTiquete)
+        public string fcObtenerStringXML(NotaCreditoElectronica pvoTiquete)
         {
             try
             {
                 //Crea Objeto serializador
-                XmlSerializer vloSerializador = new XmlSerializer(typeof(NotaDebitoElectronica));
+                XmlSerializer vloSerializador = new XmlSerializer(typeof(NotaCreditoElectronica));
                 //Define las configuraciones
                 XmlWriterSettings vloConfiguraciones = new XmlWriterSettings();
                 //Asinga los valores
@@ -393,35 +205,226 @@ namespace CR.FacturaElectronica.Nota_Debito
             }
         }
 
-
-        private NotaDebitoElectronicaCondicionVenta ObtenerCondicionVenta(string vlcCondicionVenta)
+       // Obtiene la lista de detalles
+       private NotaCreditoElectronicaLineaDetalle[] ObtenerDetalle(List<LineaDetalle> pvoListaProductos)
         {
-            NotaDebitoElectronicaCondicionVenta vloValor;
+
+            NotaCreditoElectronicaLineaDetalle[] vloArrProductosNodos;
+            NotaCreditoElectronicaLineaDetalle vloProductoNodo;
+            LineaDetalle vloProducto;
+            //decimal vlnFactorConversion = 1;
+            Impuesto vloImp;
+            try
+            {
+
+                //Define el total de productos
+                //Encabezado.TotalLineasDetalle = Encabezado.TotalLineasDetalle > pvoListaProductos.Count ? pvoListaProductos.Count : Encabezado.TotalLineasDetalle;
+                //Agrega el nodo padre
+                vloArrProductosNodos = new NotaCreditoElectronicaLineaDetalle[pvoListaProductos.Count];
+                //Recorre la lista de los articulos
+                for (int vlnI = 0; vlnI < pvoListaProductos.Count; vlnI++)
+                {
+                    //Obtengo el producto
+                    vloProducto = pvoListaProductos[vlnI];
+                    //Creo el campo linea de detalle
+                    vloProductoNodo = new NotaCreditoElectronicaLineaDetalle();
+                    //Agrego el numero de linea
+                    vloProductoNodo.NumeroLinea = (vlnI + 1).ToString();
+                    //Agrego el codigo 
+                    vloProductoNodo.Codigo = new CodigoType[1];
+                    vloProductoNodo.Codigo[0] = new CodigoType() { Tipo = ObtenerTipoCodigoProd(vloProducto.tipoCodigo), Codigo = vloProducto.Codigo };
+                    //Agrego la cantidad de productos 
+                    vloProductoNodo.Cantidad = vloProducto.Cantidad;
+                    //Agrego la unidad de medida
+                    try
+                    {
+                        vloProductoNodo.UnidadMedida = (UnidadMedidaType)Enum.Parse(typeof(UnidadMedidaType), vloProducto.UnidadMedida);
+                    }
+                    catch (Exception)
+                    {
+                        vloProductoNodo.UnidadMedida = UnidadMedidaType.Unid;
+                    }
+                    //Agrego el nombre del producto 
+                    vloProductoNodo.Detalle = ModFunciones.RemplazarCaracteresHTML(vloProducto.Detalle);
+                    //Agrega el precio unitario
+                    vloProductoNodo.PrecioUnitario = vloProducto.PrecioUnitario;
+
+                    //Agrega el monto total 
+                    vloProductoNodo.MontoTotal = vloProducto.MontoTotal;
+
+                    //Agrega el monto del descuento
+                    vloProductoNodo.MontoDescuento = vloProducto.MontoDescuento;
+                    vloProductoNodo.MontoDescuentoSpecified = vloProducto.MostrarDescuento;
+                    //Agrega la naturaleza del descuento 
+                    vloProductoNodo.NaturalezaDescuento = vloProducto.NaturalezaDescuento;
+                    vloProductoNodo.NaturalezaDescuentoSpecified = vloProducto.MostrarDescuento;
+                    //Agrega el subtotal 
+                    vloProductoNodo.SubTotal = vloProducto.SubTotal;
+
+                    /****** Se agregan los campos de exoneracion luego se validan si van o no *******/
+
+                    //Agrego los impuestos
+                    vloProductoNodo.Impuesto = new ImpuestoType[vloProducto.Impuestos.Count];
+
+                    //Se agregan los impuestos
+                    for (int vlnJ = 0; vlnJ < vloProducto.Impuestos.Count; vlnJ++)
+                    {
+                        vloImp = vloProducto.Impuestos[vlnJ];
+                        vloProductoNodo.Impuesto[vlnJ] = new ImpuestoType() { Codigo = ObtenerCodigoImpuesto(vloImp.CodigoImpuesto), Tarifa = vloImp.Tarifa, Monto = vloImp.MontoImpuesto };
+
+                        //Validar
+                        if (vloProducto.Exonerado)
+                        {
+                            //Agrego la exoneracion
+                            vloProductoNodo.Impuesto[vlnJ].Exoneracion = new ExoneracionType();
+                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.TipoDocumento = ObtenerTipoDocumentoExoneracion(vloProducto.TipoDocumento);
+                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.NumeroDocumento = vloProducto.NumeroDocumento;
+                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.FechaEmision = vloProducto.FechaEmision;
+                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.MontoImpuesto = vloProducto.MontoImpuestoExon;
+                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.PorcentajeCompra = Convert.ToInt32(vloProducto.PorcentajeCompra).ToString();
+                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.NombreInstitucion = vloProducto.NombreInstitucion;
+                        }
+                    }
+
+                    //Agrega el monto total del producto
+                    vloProductoNodo.MontoTotalLinea = vloProducto.MontoTotalLinea;
+                    //Redondea el producto
+                    //pRedondearMontos(ref vloProductoNodo, vlnParamTotalDecimales);
+                    //Agrega el producto 
+                    vloArrProductosNodos[vlnI] = vloProductoNodo;
+
+                }
+                return vloArrProductosNodos;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+
+        // Obtiene el resumen del detalle
+        private NotaCreditoElectronicaResumenFactura ObtenerResumen()
+        {
+            NotaCreditoElectronicaResumenFactura vloResumen;
+            try
+            {
+                vloResumen = new NotaCreditoElectronicaResumenFactura();
+                //Agrega la moneda
+                try
+                {
+                    vloResumen.CodigoMoneda = (NotaCreditoElectronicaResumenFacturaCodigoMoneda)Enum.Parse(typeof(NotaCreditoElectronicaResumenFacturaCodigoMoneda), Resumen.Moneda);
+                }
+                catch (Exception)
+                {
+                    vloResumen.CodigoMoneda = NotaCreditoElectronicaResumenFacturaCodigoMoneda.CRC;
+                }
+                vloResumen.CodigoMonedaSpecified = true;
+                vloResumen.TipoCambio = Resumen.TipoCambio;
+                vloResumen.CodigoMonedaSpecified = true;
+                vloResumen.TotalServGravados = Resumen.TotalServGravados;
+                vloResumen.TotalServGravadosSpecified = true;
+                //Agrega la etiqueta para total de servicios exentos
+                vloResumen.TotalServExentos = Resumen.TotalServExentos;
+                vloResumen.TotalServExentosSpecified = true;
+                //Agrega la etiqueta para total de mercaderias gravadas
+                vloResumen.TotalMercanciasGravadas = Resumen.TotalMercanciasGravadas;
+                vloResumen.TotalMercanciasGravadasSpecified = true;
+                //Agrega la etiqueta para total de mercaderias exentas
+                vloResumen.TotalMercanciasExentas = Resumen.TotalMercanciasExentas;
+                vloResumen.TotalMercanciasExentasSpecified = true;
+                //Agrega la etiqueta para total gravado
+                vloResumen.TotalGravado = Resumen.TotalGravado;
+                vloResumen.TotalGravadoSpecified = true;
+                //Agrega la etiqueta para total exento
+                vloResumen.TotalExento = Resumen.TotalExento;
+                vloResumen.TotalExentoSpecified = true;
+                //Agrega la etiqueta para total de venta
+                vloResumen.TotalVenta = Resumen.TotalVenta;
+                //Agrega la etiqueta para total de descuentos
+                vloResumen.TotalDescuentos = Resumen.TotalDescuentos;
+                vloResumen.TotalDescuentosSpecified = true;
+                //Agrega la etiqueta para total venta neta
+                vloResumen.TotalVentaNeta = Resumen.TotalVentaNeta;
+                //Obtengo el total de impuestos
+                vloResumen.TotalImpuesto = Resumen.TotalImpuesto;
+                vloResumen.TotalImpuestoSpecified = true;
+                //Agrega el total de la factura
+                vloResumen.TotalComprobante = Resumen.TotalComprobante;
+                return vloResumen;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        // Obtiene la lista de detalles
+        private NotaCreditoElectronicaInformacionReferencia[] ObtenerReferencia()
+        {
+            NotaCreditoElectronicaInformacionReferencia[] vloReferenciaArr = null;
+            NotaCreditoElectronicaInformacionReferencia vloReferencia;
+            try
+            {
+                //Valido si el objeto trae documentos
+                if(DocsReferencia != null && DocsReferencia.Length > 0)
+                {
+                    vloReferenciaArr = new NotaCreditoElectronicaInformacionReferencia[DocsReferencia.Length];
+                    //Recorro los documentos enviados
+                    for (int vlnI = 0; vlnI < DocsReferencia.Length; vlnI++)
+                    {
+                        //Creo una nueva instancia 
+                        vloReferencia = new NotaCreditoElectronicaInformacionReferencia();
+                        //Asigno los parametros
+                        vloReferencia.Codigo = DefinirCodigoReferencia(DocsReferencia[vlnI].Codigo);
+                        vloReferencia.TipoDoc = DefinirReferenciaTipoDoc(DocsReferencia[vlnI].TipoDoc);
+                        vloReferencia.FechaEmision = DocsReferencia[vlnI].FechaEmision;
+                        vloReferencia.Numero = DocsReferencia[vlnI].Numero;
+                        vloReferencia.Razon = DocsReferencia[vlnI].Razon;
+                        //Lo agrego al arreglo
+                        vloReferenciaArr[vlnI] = vloReferencia;
+                    }
+                }
+                return vloReferenciaArr;
+            }
+            catch (Exception)
+            {
+                
+                throw;
+            }
+            
+        }
+
+        private NotaCreditoElectronicaCondicionVenta ObtenerCondicionVenta(string vlcCondicionVenta)
+        {
+            NotaCreditoElectronicaCondicionVenta vloValor;
             try
             {
 
                 switch (vlcCondicionVenta)
                 {
                     case "01":
-                        vloValor = NotaDebitoElectronicaCondicionVenta.Item01;
+                        vloValor = NotaCreditoElectronicaCondicionVenta.Item01;
                         break;
                     case "02":
-                        vloValor = NotaDebitoElectronicaCondicionVenta.Item02;
+                        vloValor = NotaCreditoElectronicaCondicionVenta.Item02;
                         break;
                     case "03":
-                        vloValor = NotaDebitoElectronicaCondicionVenta.Item03;
+                        vloValor = NotaCreditoElectronicaCondicionVenta.Item03;
                         break;
                     case "04":
-                        vloValor = NotaDebitoElectronicaCondicionVenta.Item04;
+                        vloValor = NotaCreditoElectronicaCondicionVenta.Item04;
                         break;
                     case "05":
-                        vloValor = NotaDebitoElectronicaCondicionVenta.Item05;
+                        vloValor = NotaCreditoElectronicaCondicionVenta.Item05;
                         break;
                     case "06":
-                        vloValor = NotaDebitoElectronicaCondicionVenta.Item06;
+                        vloValor = NotaCreditoElectronicaCondicionVenta.Item06;
                         break;
                     default:
-                        vloValor = NotaDebitoElectronicaCondicionVenta.Item99;
+                        vloValor = NotaCreditoElectronicaCondicionVenta.Item99;
                         break;
                 }
                 return vloValor;
@@ -433,30 +436,30 @@ namespace CR.FacturaElectronica.Nota_Debito
             }
         }
 
-        private NotaDebitoElectronicaMedioPago ObtenerMedioPago(string vlcMedioPago)
+        private NotaCreditoElectronicaMedioPago ObtenerMedioPago(string vlcMedioPago)
         {
-            NotaDebitoElectronicaMedioPago vloValor;
+            NotaCreditoElectronicaMedioPago vloValor;
             try
             {
                 switch (vlcMedioPago)
                 {
                     case "01":
-                        vloValor = NotaDebitoElectronicaMedioPago.Item01;
+                        vloValor = NotaCreditoElectronicaMedioPago.Item01;
                         break;
                     case "02":
-                        vloValor = NotaDebitoElectronicaMedioPago.Item02;
+                        vloValor = NotaCreditoElectronicaMedioPago.Item02;
                         break;
                     case "03":
-                        vloValor = NotaDebitoElectronicaMedioPago.Item03;
+                        vloValor = NotaCreditoElectronicaMedioPago.Item03;
                         break;
                     case "04":
-                        vloValor = NotaDebitoElectronicaMedioPago.Item04;
+                        vloValor = NotaCreditoElectronicaMedioPago.Item04;
                         break;
                     case "05":
-                        vloValor = NotaDebitoElectronicaMedioPago.Item05;
+                        vloValor = NotaCreditoElectronicaMedioPago.Item05;
                         break;
                     default:
-                        vloValor = NotaDebitoElectronicaMedioPago.Item99;
+                        vloValor = NotaCreditoElectronicaMedioPago.Item99;
                         break;
 
                 }
@@ -504,7 +507,7 @@ namespace CR.FacturaElectronica.Nota_Debito
             }
         }
 
-        private  ImpuestoTypeCodigo ObtenerCodigoImpuesto(string pvcCodigo)
+        private ImpuestoTypeCodigo ObtenerCodigoImpuesto(string pvcCodigo)
         {
             ImpuestoTypeCodigo vloValor;
             try
@@ -590,12 +593,12 @@ namespace CR.FacturaElectronica.Nota_Debito
             }
         }
 
-        private IdentificacionTypeTipo ObtenertipoIdentificacion(string vlcTipoIdentificacionReceptor)
+        private IdentificacionTypeTipo ObtenertipoIdentificacion(string pvcTipoIdentificacionReceptor)
         {
             IdentificacionTypeTipo vloRespuesta;
             try
             {
-                switch (vlcTipoIdentificacionReceptor)
+                switch (pvcTipoIdentificacionReceptor)
                 {
                     case "01":
                         vloRespuesta = IdentificacionTypeTipo.Item01;
@@ -623,43 +626,43 @@ namespace CR.FacturaElectronica.Nota_Debito
             }
         }
 
-        private NotaDebitoElectronicaInformacionReferenciaTipoDoc DefinirReferenciaTipoDoc(string pvcTipoDocRef)
+        private NotaCreditoElectronicaInformacionReferenciaTipoDoc DefinirReferenciaTipoDoc(string pvcTipoDocRef)
         {
-            NotaDebitoElectronicaInformacionReferenciaTipoDoc vloRes;
+            NotaCreditoElectronicaInformacionReferenciaTipoDoc vloRes;
             try
             {
                 switch (pvcTipoDocRef)
                 {
                     /// <comentarios/>
                     case "01":
-                        vloRes = NotaDebitoElectronicaInformacionReferenciaTipoDoc.Item01;
+                        vloRes = NotaCreditoElectronicaInformacionReferenciaTipoDoc.Item01;
                         break;
                     case "02":
-                        vloRes = NotaDebitoElectronicaInformacionReferenciaTipoDoc.Item02;
+                        vloRes = NotaCreditoElectronicaInformacionReferenciaTipoDoc.Item02;
                         break;
                     case "03":
-                        vloRes = NotaDebitoElectronicaInformacionReferenciaTipoDoc.Item03;
+                        vloRes = NotaCreditoElectronicaInformacionReferenciaTipoDoc.Item03;
                         break;
                     case "04":
-                        vloRes = NotaDebitoElectronicaInformacionReferenciaTipoDoc.Item04;
+                        vloRes = NotaCreditoElectronicaInformacionReferenciaTipoDoc.Item04;
                         break;
                     case "05":
-                        vloRes = NotaDebitoElectronicaInformacionReferenciaTipoDoc.Item05;
+                        vloRes = NotaCreditoElectronicaInformacionReferenciaTipoDoc.Item05;
                         break;
                     case "06":
-                        vloRes = NotaDebitoElectronicaInformacionReferenciaTipoDoc.Item06;
+                        vloRes = NotaCreditoElectronicaInformacionReferenciaTipoDoc.Item06;
                         break;
                     case "07":
-                        vloRes = NotaDebitoElectronicaInformacionReferenciaTipoDoc.Item07;
+                        vloRes = NotaCreditoElectronicaInformacionReferenciaTipoDoc.Item07;
                         break;
                     case "08":
-                        vloRes = NotaDebitoElectronicaInformacionReferenciaTipoDoc.Item08;
+                        vloRes = NotaCreditoElectronicaInformacionReferenciaTipoDoc.Item08;
                         break;
                     default:
-                        vloRes = NotaDebitoElectronicaInformacionReferenciaTipoDoc.Item99;
+                        vloRes = NotaCreditoElectronicaInformacionReferenciaTipoDoc.Item99;
                         break;
                 }
-                return vloRes; 
+                return vloRes;
             }
             catch (Exception)
             {
@@ -669,30 +672,30 @@ namespace CR.FacturaElectronica.Nota_Debito
             
         }
 
-        private NotaDebitoElectronicaInformacionReferenciaCodigo DefinirCodigoReferencia(string pvcCodigo)
+        private NotaCreditoElectronicaInformacionReferenciaCodigo DefinirCodigoReferencia(string pvcCodigo)
         {
-            NotaDebitoElectronicaInformacionReferenciaCodigo vloRes;
+            NotaCreditoElectronicaInformacionReferenciaCodigo vloRes;
             try
             {
                 switch (pvcCodigo)
                 {
                     case "01":
-                        vloRes = NotaDebitoElectronicaInformacionReferenciaCodigo.Item01;
+                        vloRes = NotaCreditoElectronicaInformacionReferenciaCodigo.Item01;
                         break;
                     case "02":
-                        vloRes = NotaDebitoElectronicaInformacionReferenciaCodigo.Item02;
+                        vloRes = NotaCreditoElectronicaInformacionReferenciaCodigo.Item02;
                         break;
                     case "03":
-                        vloRes = NotaDebitoElectronicaInformacionReferenciaCodigo.Item03;
+                        vloRes = NotaCreditoElectronicaInformacionReferenciaCodigo.Item03;
                         break;
                     case "04":
-                        vloRes = NotaDebitoElectronicaInformacionReferenciaCodigo.Item04;
+                        vloRes = NotaCreditoElectronicaInformacionReferenciaCodigo.Item04;
                         break;
                     case "05":
-                        vloRes = NotaDebitoElectronicaInformacionReferenciaCodigo.Item05;
+                        vloRes = NotaCreditoElectronicaInformacionReferenciaCodigo.Item05;
                         break;
                     default:
-                        vloRes = NotaDebitoElectronicaInformacionReferenciaCodigo.Item99;
+                        vloRes = NotaCreditoElectronicaInformacionReferenciaCodigo.Item99;
                         break;
                 }
                 return vloRes;
@@ -703,7 +706,7 @@ namespace CR.FacturaElectronica.Nota_Debito
                 throw;
             }
         }
-
         #endregion
+
     }
 }

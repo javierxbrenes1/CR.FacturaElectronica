@@ -44,7 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entidades\Configuracion.cs" />
+    <Compile Include="Entidades\ConfiguracionContactoReceptor.cs" />
+    <Compile Include="Entidades\ConfiguracionCreacionDocumentos.cs" />
+    <Compile Include="Entidades\ConfiguracionComunicacionHacienda.cs" />
     <Compile Include="Entidades\DocumentoParametros.cs" />
     <Compile Include="Entidades\DocumentoReferencia.cs" />
     <Compile Include="Entidades\Encabezado.cs" />
@@ -53,49 +55,59 @@
     <Compile Include="Entidades\Producto.cs" />
     <Compile Include="Entidades\Resumen.cs" />
     <Compile Include="Entidades\Telefono.cs" />
+    <Compile Include="Estructuras\RespuestaCreacionDoc.cs" />
+    <Compile Include="Implementacion\FirmadorElectronico.cs" />
+    <Compile Include="Implementacion\GeneradorDocumentos.cs" />
+    <Compile Include="Implementacion\GeneradorDocumentoFactory.cs" />
     <Compile Include="Interfaces\IDocumento.cs" />
+    <Compile Include="Interfaces\IFirmadorElectronico.cs" />
     <Compile Include="Interfaces\IGeneradorDocumentos.cs" />
-    <Compile Include="Procesos\Factura\FacturaElectronicaProcesador.cs" />
-    <Compile Include="Procesos\Factura\FacturaElectronica_FR.cs">
+    <Compile Include="Interfaces\IGeneradorDocumentoFactory.cs" />
+    <Compile Include="Generadores\Factura\FacturaElectronicaProcesador.cs" />
+    <Compile Include="Generadores\Factura\FacturaElectronica_FR.cs">
       <DependentUpon>FacturaElectronica_FR.xsd</DependentUpon>
     </Compile>
-    <Compile Include="Procesos\Mensaje_Receptor\MensajeReceptor.cs" />
-    <Compile Include="Procesos\Mensaje_Receptor\MensajeReceptorProcesador.cs" />
-    <Compile Include="Procesos\Nota_Credito\NotaCreditoElectronica_FR.cs">
+    <Compile Include="Generadores\Mensaje_Receptor\MensajeReceptor.cs" />
+    <Compile Include="Generadores\Mensaje_Receptor\MensajeReceptorProcesador.cs" />
+    <Compile Include="Generadores\Nota_Credito\NotaCreditoElectronica_FR.cs">
       <DependentUpon>NotaCreditoElectronica_FR.xsd</DependentUpon>
     </Compile>
-    <Compile Include="Procesos\Nota_Credito\NotaCreditoProcesador.cs" />
-    <Compile Include="Procesos\Nota_Debito\NotaDebitoElectronica_FR.cs">
+    <Compile Include="Generadores\Nota_Credito\NotaCreditoProcesador.cs" />
+    <Compile Include="Generadores\Nota_Debito\NotaDebitoElectronica_FR.cs">
       <DependentUpon>NotaDebitoElectronica_FR.xsd</DependentUpon>
     </Compile>
-    <Compile Include="Procesos\Nota_Debito\NotaDebitoProcesador.cs" />
-    <Compile Include="Procesos\Tiquete\TiqueteElectronico_FR.cs">
+    <Compile Include="Generadores\Nota_Debito\NotaDebitoProcesador.cs" />
+    <Compile Include="Generadores\Tiquete\TiqueteElectronico_FR.cs">
       <DependentUpon>TiqueteElectronico_FR.xsd</DependentUpon>
     </Compile>
-    <Compile Include="Procesos\Tiquete\TiqueteProcesador.cs" />
+    <Compile Include="Generadores\Tiquete\TiqueteProcesador.cs" />
+    <Compile Include="NotGeneradorFoundException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shared\Constantes.cs" />
+    <Compile Include="Shared\Enumeradores.cs" />
     <Compile Include="Shared\ModFunciones.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Hacienda\" />
+    <Folder Include="Procesos\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="Procesos\Factura\FacturaElectronica_FR.xsd">
+    <None Include="Generadores\Factura\FacturaElectronica_FR.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Procesos\Mensaje_Receptor\MensajeReceptor_4.2.xsd">
+    <None Include="Generadores\Mensaje_Receptor\MensajeReceptor_4.2.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Procesos\Nota_Credito\NotaCreditoElectronica_FR.xsd">
+    <None Include="Generadores\Nota_Credito\NotaCreditoElectronica_FR.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Procesos\Nota_Debito\NotaDebitoElectronica_FR.xsd">
+    <None Include="Generadores\Nota_Debito\NotaDebitoElectronica_FR.xsd">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Procesos\Tiquete\TiqueteElectronico_FR.xsd">
+    <None Include="Generadores\Tiquete\TiqueteElectronico_FR.xsd">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>

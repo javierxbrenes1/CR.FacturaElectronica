@@ -8,14 +8,14 @@ using System.Xml;
 using CR.FacturaElectronica.Entidades;
 using CR.FacturaElectronica.Shared;
 
-namespace CR.FacturaElectronica.Tiquete
+namespace CR.FacturaElectronica.Factura
 {
-
-    public class TiqueteProcesador : IDocumento
+    internal class FacturaElectronicaProcesador :IGeneradorDocumento
     {
         #region Propiedades
 
-         
+
+ 
 
         public List<LineaDetalle> Productos { get; set; }
 
@@ -29,32 +29,28 @@ namespace CR.FacturaElectronica.Tiquete
 
         #region Funciones
 
-
         
-
         // Obtiene la lista de detalles
-        private TiqueteElectronicoLineaDetalle[] ObtenerDetalle(List<LineaDetalle> pvoListaProductos)
+        private FacturaElectronicaLineaDetalle[] ObtenerDetalle(List<LineaDetalle> pvoListaProductos)
         {
 
-            TiqueteElectronicoLineaDetalle[] vloArrProductosNodos;
-            TiqueteElectronicoLineaDetalle vloProductoNodo;
+            FacturaElectronicaLineaDetalle[] vloArrProductosNodos;
+            FacturaElectronicaLineaDetalle vloProductoNodo;
             LineaDetalle vloProducto;
-            //decimal vlnFactorConversion = 1;
             Impuesto vloImp;
             try
             {
-                
-                //Define el total de productos
+               //Define el total de productos
                 //Encabezado.TotalLineasDetalle = Encabezado.TotalLineasDetalle > pvoListaProductos.Count ? pvoListaProductos.Count : Encabezado.TotalLineasDetalle;
                 //Agrega el nodo padre
-                vloArrProductosNodos = new TiqueteElectronicoLineaDetalle[pvoListaProductos.Count];
+                vloArrProductosNodos = new FacturaElectronicaLineaDetalle[pvoListaProductos.Count];
                 //Recorre la lista de los articulos
                 for (int vlnI = 0; vlnI < pvoListaProductos.Count; vlnI++)
                 {
                     //Obtengo el producto
                     vloProducto = pvoListaProductos[vlnI];
                     //Creo el campo linea de detalle
-                    vloProductoNodo = new TiqueteElectronicoLineaDetalle();
+                    vloProductoNodo = new FacturaElectronicaLineaDetalle();
                     //Agrego el numero de linea
                     vloProductoNodo.NumeroLinea = (vlnI + 1).ToString();
                     //Agrego el codigo 
@@ -81,10 +77,12 @@ namespace CR.FacturaElectronica.Tiquete
 
                     //Agrega el monto del descuento
                     vloProductoNodo.MontoDescuento = vloProducto.MontoDescuento;
-                    vloProductoNodo.MontoDescuentoSpecified = vloProducto.MostrarDescuento;
+                    //<JBR08012018 >
+                    vloProductoNodo.MontoDescuentoSpecified = vloProducto.MostrarDescuento;//(vloProducto.MontoDescuento > 0);
                     //Agrega la naturaleza del descuento 
                     vloProductoNodo.NaturalezaDescuento = vloProducto.NaturalezaDescuento;
                     vloProductoNodo.NaturalezaDescuentoSpecified = vloProducto.MostrarDescuento;
+                    //</JBR08012018>
                     //Agrega el subtotal 
                     vloProductoNodo.SubTotal = vloProducto.SubTotal;
 
@@ -129,22 +127,22 @@ namespace CR.FacturaElectronica.Tiquete
                 throw;
             }
         }
-
+        
         // Obtiene el resumen del detalle
-        private TiqueteElectronicoResumenFactura ObtenerResumen()
+        private FacturaElectronicaResumenFactura ObtenerResumen()
         {
-            TiqueteElectronicoResumenFactura vloResumen;
+            FacturaElectronicaResumenFactura vloResumen;
             try
             {
-                vloResumen = new TiqueteElectronicoResumenFactura();
+                vloResumen = new FacturaElectronicaResumenFactura();
                 //Agrega la moneda
                 try
                 {
-                    vloResumen.CodigoMoneda = (TiqueteElectronicoResumenFacturaCodigoMoneda)Enum.Parse(typeof(TiqueteElectronicoResumenFacturaCodigoMoneda), Resumen.Moneda);
+                    vloResumen.CodigoMoneda = (FacturaElectronicaResumenFacturaCodigoMoneda)Enum.Parse(typeof(FacturaElectronicaResumenFacturaCodigoMoneda), Resumen.Moneda);
                 }
                 catch (Exception)
                 {
-                    vloResumen.CodigoMoneda = TiqueteElectronicoResumenFacturaCodigoMoneda.CRC;
+                    vloResumen.CodigoMoneda = FacturaElectronicaResumenFacturaCodigoMoneda.CRC;
                 }
                 vloResumen.CodigoMonedaSpecified = true;
                 vloResumen.TipoCambio = Resumen.TipoCambio;
@@ -167,7 +165,7 @@ namespace CR.FacturaElectronica.Tiquete
                 vloResumen.TotalExento = Resumen.TotalExento;
                 vloResumen.TotalExentoSpecified = true;
                 //Agrega la etiqueta para total de venta
-                 vloResumen.TotalVenta = Resumen.TotalVenta;
+                vloResumen.TotalVenta = Resumen.TotalVenta;
                 //Agrega la etiqueta para total de descuentos
                 vloResumen.TotalDescuentos = Resumen.TotalDescuentos;
                 vloResumen.TotalDescuentosSpecified = true;
@@ -177,7 +175,7 @@ namespace CR.FacturaElectronica.Tiquete
                 vloResumen.TotalImpuesto = Resumen.TotalImpuesto;
                 vloResumen.TotalImpuestoSpecified = true;
                 //Agrega el total de la factura
-                vloResumen.TotalComprobante = Resumen.TotalComprobante; 
+                vloResumen.TotalComprobante = Resumen.TotalComprobante;
                 return vloResumen;
             }
             catch (Exception)
@@ -187,169 +185,22 @@ namespace CR.FacturaElectronica.Tiquete
             }
         }
 
-        // Retorna la ruta donde creo el archivo
-        public string CrearXML()
-        {
-            TiqueteElectronico vloTiquete = new TiqueteElectronico();
-            int vlnContador = 0;
-
-            try
-            {
-                
-                    //Agrega la clave
-                    vloTiquete.Clave = Encabezado.Clave;
-                    //agrega el número de consecutivo 
-                    vloTiquete.NumeroConsecutivo = Encabezado.NumeroConsecutivo;
-                    //Agrega la fecha de emision 
-                    vloTiquete.FechaEmision = Encabezado.FechaEmision;
-
-                    //Agrega la informacion del emisor
-                    vloTiquete.Emisor = new EmisorType()
-                    {
-                        Nombre = Encabezado.Emisor.Nombre,
-                        Identificacion = new IdentificacionType()
-                        {
-                            Tipo = IdentificacionTypeTipo.Item02,
-                            Numero = Encabezado.Emisor.NumeroIdentificacion
-                        },
-                        NombreComercial = Encabezado.Emisor.NombreComercial,
-                        Ubicacion = new UbicacionType()
-                        {
-                            Provincia = Encabezado.Emisor.Provincia,
-                            Canton = Encabezado.Emisor.Canton,
-                            Distrito = Encabezado.Emisor.Distrito,
-                            Barrio = Encabezado.Emisor.Barrio,
-                            OtrasSenas = Encabezado.Emisor.OtrasSennas
-                        },
-                        CorreoElectronico = Encabezado.Emisor.Correo,
-                        
-                    };
-                    //Valida el telefono 
-                    if (Encabezado.Emisor.Telefono != null)
-                    {
-                        vloTiquete.Emisor.Telefono = new TelefonoType()
-                        {
-                            CodigoPais = Encabezado.Emisor.Telefono.CodigoArea,
-                            NumTelefono = Encabezado.Emisor.Telefono.Numero
-                        };
-                    }
-                    
-                    //Valida el fax 
-                    if (Encabezado.Emisor.Fax != null)
-                    {
-                        vloTiquete.Emisor.Fax = new TelefonoType()
-                        {
-                            CodigoPais = Encabezado.Emisor.Fax.CodigoArea,
-                            NumTelefono = Encabezado.Emisor.Fax.Numero
-                        };
-                    }
-                    //Valida si el receptor es tipo cliente general no lo incluye
-                    if (Encabezado.Receptor != null)
-                    {
-                        vloTiquete.Receptor = new ReceptorType();
-
-                        vloTiquete.Receptor.Nombre = Encabezado.Receptor.Nombre;
-                        //Si el id es extranjero
-                        if (Encabezado.Receptor.EsIdExtranjera)
-                        {
-                            vloTiquete.Receptor.IdentificacionExtranjero = Encabezado.Receptor.IdentificacionExtranjero;
-                        }
-                        else
-                        {
-                            vloTiquete.Receptor.Identificacion = new IdentificacionType()
-                            {
-                                Tipo = ObtenertipoIdentificacion(Encabezado.Receptor.TipoIdentificacion),
-                                Numero = Encabezado.Receptor.NumeroIdentificacion
-                            };
-                        }
-
-                        vloTiquete.Receptor.NombreComercial = Encabezado.Receptor.NombreComercial;
-                        //Valida el numero de telefono
-                        if (!string.IsNullOrEmpty(Encabezado.Receptor.Correo))
-                        {
-                            vloTiquete.Receptor.CorreoElectronico = Encabezado.Receptor.Correo;
-                        }
-
-                        //Agrega el telefono
-                        if (Encabezado.Receptor.Telefono != null)
-                        {
-                            vloTiquete.Receptor.Telefono = new TelefonoType()
-                            {
-                                CodigoPais = Encabezado.Receptor.Telefono.CodigoArea,
-                                NumTelefono = Encabezado.Receptor.Telefono.Numero
-                            };
-                        }
-
-                        //Si hay provincia
-                        if (!string.IsNullOrEmpty(Encabezado.Receptor.Provincia))
-                        {
-                            vloTiquete.Receptor.Ubicacion = new UbicacionType();
-                            vloTiquete.Receptor.Ubicacion.Provincia = Encabezado.Receptor.Provincia;
-                            vloTiquete.Receptor.Ubicacion.Canton = Encabezado.Receptor.Canton;
-                            vloTiquete.Receptor.Ubicacion.Distrito = Encabezado.Receptor.Distrito;
-                            if (!string.IsNullOrEmpty(Encabezado.Receptor.Barrio))
-                            {
-                                vloTiquete.Receptor.Ubicacion.Barrio = Encabezado.Receptor.Barrio;
-                            }
-                            vloTiquete.Receptor.Ubicacion.OtrasSenas = Encabezado.Receptor.OtrasSennas;
-
-                        }
-                    }
-                    //condicion de venta
-                    vloTiquete.CondicionVenta = ObtenerCondicionVenta(Encabezado.CondicionVenta);
-                    //Plazo
-                    vloTiquete.PlazoCredito = Encabezado.PlazoCredito;
-                    //Medios de pago 
-                    vloTiquete.MedioPago = new TiqueteElectronicoMedioPago[Encabezado.MediosPago.Length];
-                    foreach (string vlcMedio in Encabezado.MediosPago)
-                    {
-                        vloTiquete.MedioPago[vlnContador] = ObtenerMedioPago(vlcMedio);
-                        vlnContador++;
-                    }
-                    //Asigna los detalles de servicio
-                    vloTiquete.DetalleServicio = ObtenerDetalle(Productos);
-                    //Resumen de factura
-                    vloTiquete.ResumenFactura = ObtenerResumen();
-                    //Obtiene referencias
-                    vloTiquete.InformacionReferencia = ObtenerReferencia();
-                    //Agrega la normativa
-                    vloTiquete.Normativa = new TiqueteElectronicoNormativa();
-                    //Agrega el nombre de la normativa
-                    vloTiquete.Normativa.NumeroResolucion = Encabezado.NormativaNombre;
-                    //Agrega la fecha
-                    vloTiquete.Normativa.FechaResolucion = Encabezado.NormativaFecha;
-
-                    vloTiquete.Otros = new TiqueteElectronicoOtros();
-                    vloTiquete.Otros.OtroTexto = new TiqueteElectronicoOtrosOtroTexto[1];
-                    //vloTiquete.Otros.OtroTexto[0] = new TiqueteElectronicoOtrosOtroTexto() { codigo = "00", Value = IdTransaccion };
-                    
-                    return fcObtenerStringXML(vloTiquete);
-                     
-
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
-
         // Obtiene la lista de detalles
-        private TiqueteElectronicoInformacionReferencia[] ObtenerReferencia()
+        private FacturaElectronicaInformacionReferencia[] ObtenerReferencia()
         {
-            TiqueteElectronicoInformacionReferencia[] vloReferenciaArr = null;
-            TiqueteElectronicoInformacionReferencia vloReferencia;
+            FacturaElectronicaInformacionReferencia[] vloReferenciaArr = null;
+            FacturaElectronicaInformacionReferencia vloReferencia;
             try
             {
                 //Valido si el objeto trae documentos
                 if (DocsReferencia != null && DocsReferencia.Length > 0)
                 {
-                    vloReferenciaArr = new TiqueteElectronicoInformacionReferencia[DocsReferencia.Length];
+                    vloReferenciaArr = new FacturaElectronicaInformacionReferencia[DocsReferencia.Length];
                     //Recorro los documentos enviados
                     for (int vlnI = 0; vlnI < DocsReferencia.Length; vlnI++)
                     {
                         //Creo una nueva instancia 
-                        vloReferencia = new TiqueteElectronicoInformacionReferencia();
+                        vloReferencia = new FacturaElectronicaInformacionReferencia();
                         //Asigno los parametros
                         vloReferencia.Codigo = DefinirCodigoReferencia(DocsReferencia[vlnI].Codigo);
                         vloReferencia.TipoDoc = DefinirReferenciaTipoDoc(DocsReferencia[vlnI].TipoDoc);
@@ -370,18 +221,157 @@ namespace CR.FacturaElectronica.Tiquete
 
         }
 
+        // Retorna la ruta donde creo el archivo
+        public string CrearXML()
+        {
+            FacturaElectronica vloTiquete = new FacturaElectronica();
+            int vlnContador = 0;
+
+            try
+            {
+                //Agrega la clave
+                vloTiquete.Clave = Encabezado.Clave;
+                //agrega el número de consecutivo 
+                vloTiquete.NumeroConsecutivo = Encabezado.NumeroConsecutivo;
+                //Agrega la fecha de emision 
+                vloTiquete.FechaEmision = Encabezado.FechaEmision;
+
+                //Agrega la informacion del emisor
+                vloTiquete.Emisor = new EmisorType()
+                {
+                    Nombre = Encabezado.Emisor.Nombre,
+                    Identificacion = new IdentificacionType()
+                    {
+                        Tipo = IdentificacionTypeTipo.Item02,
+                        Numero = Encabezado.Emisor.NumeroIdentificacion
+                    },
+                    NombreComercial = Encabezado.Emisor.NombreComercial,
+                    Ubicacion = new UbicacionType()
+                    {
+                        Provincia = Encabezado.Emisor.Provincia,
+                        Canton = Encabezado.Emisor.Canton,
+                        Distrito = Encabezado.Emisor.Distrito,
+                        Barrio = Encabezado.Emisor.Barrio,
+                        OtrasSenas = Encabezado.Emisor.OtrasSennas
+                    },
+                    CorreoElectronico = Encabezado.Emisor.Correo,
+
+                };
+                //Valida el telefono 
+                if (Encabezado.Emisor.Telefono != null)
+                {
+                    vloTiquete.Emisor.Telefono = new TelefonoType()
+                    {
+                        CodigoPais = Encabezado.Emisor.Telefono.CodigoArea,
+                        NumTelefono = Encabezado.Emisor.Telefono.Numero
+                    };
+                }
+                //Valida el fax 
+                if (Encabezado.Emisor.Fax != null)
+                {
+                    vloTiquete.Emisor.Fax = new TelefonoType()
+                    {
+                        CodigoPais = Encabezado.Emisor.Fax.CodigoArea,
+                        NumTelefono = Encabezado.Emisor.Fax.Numero
+                    };
+                }
+                //Valida si el receptor es tipo cliente general no lo incluye
+                if (Encabezado.Receptor != null)
+                {
+                    vloTiquete.Receptor = new ReceptorType();
+
+                    vloTiquete.Receptor.Nombre = Encabezado.Receptor.Nombre;
+                    //Si el id es extranjero
+                    if (Encabezado.Receptor.EsIdExtranjera)
+                    {
+                        vloTiquete.Receptor.IdentificacionExtranjero = Encabezado.Receptor.IdentificacionExtranjero;
+                    }
+                    else
+                    {
+                        vloTiquete.Receptor.Identificacion = new IdentificacionType()
+                        {
+                            Tipo = ObtenertipoIdentificacion(Encabezado.Receptor.TipoIdentificacion),
+                            Numero = Encabezado.Receptor.NumeroIdentificacion
+                        };
+                    }
+                    vloTiquete.Receptor.NombreComercial = Encabezado.Receptor.NombreComercial;
+                    if (!string.IsNullOrEmpty(Encabezado.Receptor.Correo))
+                    {
+                        vloTiquete.Receptor.CorreoElectronico = Encabezado.Receptor.Correo;
+                    }
+
+                    //Agrega el telefono
+                    if (Encabezado.Receptor.Telefono != null)
+                    {
+                        vloTiquete.Receptor.Telefono = new TelefonoType()
+                        {
+                            CodigoPais = Encabezado.Receptor.Telefono.CodigoArea,
+                            NumTelefono = Encabezado.Receptor.Telefono.Numero
+                        };
+                    }
+
+
+                    //Si hay provincia
+                    if (!string.IsNullOrEmpty(Encabezado.Receptor.Provincia))
+                    {
+                        vloTiquete.Receptor.Ubicacion = new UbicacionType();
+                        vloTiquete.Receptor.Ubicacion.Provincia = Encabezado.Receptor.Provincia;
+                        vloTiquete.Receptor.Ubicacion.Canton = Encabezado.Receptor.Canton;
+                        vloTiquete.Receptor.Ubicacion.Distrito = Encabezado.Receptor.Distrito;
+                        if (!string.IsNullOrEmpty(Encabezado.Receptor.Barrio)) vloTiquete.Receptor.Ubicacion.Barrio = Encabezado.Receptor.Barrio;
+                        vloTiquete.Receptor.Ubicacion.OtrasSenas = Encabezado.Receptor.OtrasSennas;
+                    }
+                }
+                //condicion de venta
+                vloTiquete.CondicionVenta = ObtenerCondicionVenta(Encabezado.CondicionVenta);
+                //Plazo
+                vloTiquete.PlazoCredito = Encabezado.PlazoCredito;
+                //Medios de pago 
+                vloTiquete.MedioPago = new FacturaElectronicaMedioPago[Encabezado.MediosPago.Length];
+                foreach (string vlcMedio in Encabezado.MediosPago)
+                {
+                    vloTiquete.MedioPago[vlnContador] = ObtenerMedioPago(vlcMedio);
+                    vlnContador++;
+                }
+                //Asigna los detalles de servicio
+                vloTiquete.DetalleServicio = ObtenerDetalle(Productos);
+                //Resumen de factura
+                vloTiquete.ResumenFactura = ObtenerResumen();
+
+                //Obtiene referencias
+                vloTiquete.InformacionReferencia = ObtenerReferencia();
+
+                //Agrega la normativa
+                vloTiquete.Normativa = new FacturaElectronicaNormativa();
+                //Agrega el nombre de la normativa
+                vloTiquete.Normativa.NumeroResolucion = Encabezado.NormativaNombre;
+                //Agrega la fecha
+                vloTiquete.Normativa.FechaResolucion = Encabezado.NormativaFecha;
+
+                vloTiquete.Otros = new FacturaElectronicaOtros();
+                vloTiquete.Otros.OtroTexto = new FacturaElectronicaOtrosOtroTexto[1];
+                //vloTiquete.Otros.OtroTexto[0] = new FacturaElectronicaOtrosOtroTexto() { codigo = "00", Value = IdTransaccion };
+                //Retorna el texto
+                return fcObtenerStringXML(vloTiquete);
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         // Guarda el XML en un archivo fisico
-        public string fcObtenerStringXML(TiqueteElectronico pvoTiquete)
+        public string fcObtenerStringXML(FacturaElectronica pvoTiquete)
         {
             try
             {
-                
                 //Crea Objeto serializador
-                XmlSerializer vloSerializador = new XmlSerializer(typeof(TiqueteElectronico));
-                
+                XmlSerializer vloSerializador = new XmlSerializer(typeof(FacturaElectronica));
                 //Define las configuraciones
                 XmlWriterSettings vloConfiguraciones = new XmlWriterSettings();
-               
                 //Asinga los valores
                 vloConfiguraciones.Encoding = new UnicodeEncoding(false, false); // no BOM in a .NET string
                 vloConfiguraciones.Indent = true;
@@ -400,39 +390,38 @@ namespace CR.FacturaElectronica.Tiquete
             }
             catch (Exception ex)
             {
-                throw ex;    
+                throw ex;
             }
         }
 
-
-        private TiqueteElectronicoCondicionVenta ObtenerCondicionVenta(string vlcCondicionVenta)
+        private FacturaElectronicaCondicionVenta ObtenerCondicionVenta(string vlcCondicionVenta)
         {
-            TiqueteElectronicoCondicionVenta vloValor;
+            FacturaElectronicaCondicionVenta vloValor;
             try
             {
 
                 switch (vlcCondicionVenta)
                 {
                     case "01":
-                        vloValor = TiqueteElectronicoCondicionVenta.Item01;
+                        vloValor = FacturaElectronicaCondicionVenta.Item01;
                         break;
                     case "02":
-                        vloValor = TiqueteElectronicoCondicionVenta.Item02;
+                        vloValor = FacturaElectronicaCondicionVenta.Item02;
                         break;
                     case "03":
-                        vloValor = TiqueteElectronicoCondicionVenta.Item03;
+                        vloValor = FacturaElectronicaCondicionVenta.Item03;
                         break;
                     case "04":
-                        vloValor = TiqueteElectronicoCondicionVenta.Item04;
+                        vloValor = FacturaElectronicaCondicionVenta.Item04;
                         break;
                     case "05":
-                        vloValor = TiqueteElectronicoCondicionVenta.Item05;
+                        vloValor = FacturaElectronicaCondicionVenta.Item05;
                         break;
                     case "06":
-                        vloValor = TiqueteElectronicoCondicionVenta.Item06;
+                        vloValor = FacturaElectronicaCondicionVenta.Item06;
                         break;
                     default:
-                        vloValor = TiqueteElectronicoCondicionVenta.Item99;
+                        vloValor = FacturaElectronicaCondicionVenta.Item99;
                         break;
                 }
                 return vloValor;
@@ -444,30 +433,30 @@ namespace CR.FacturaElectronica.Tiquete
             }
         }
 
-        private TiqueteElectronicoMedioPago ObtenerMedioPago(string vlcMedioPago)
+        private FacturaElectronicaMedioPago ObtenerMedioPago(string vlcMedioPago)
         {
-            TiqueteElectronicoMedioPago vloValor;
+            FacturaElectronicaMedioPago vloValor;
             try
             {
                 switch (vlcMedioPago)
                 {
                     case "01":
-                        vloValor = TiqueteElectronicoMedioPago.Item01;
+                        vloValor = FacturaElectronicaMedioPago.Item01;
                         break;
                     case "02":
-                        vloValor = TiqueteElectronicoMedioPago.Item02;
+                        vloValor = FacturaElectronicaMedioPago.Item02;
                         break;
                     case "03":
-                        vloValor = TiqueteElectronicoMedioPago.Item03;
+                        vloValor = FacturaElectronicaMedioPago.Item03;
                         break;
                     case "04":
-                        vloValor = TiqueteElectronicoMedioPago.Item04;
+                        vloValor = FacturaElectronicaMedioPago.Item04;
                         break;
                     case "05":
-                        vloValor = TiqueteElectronicoMedioPago.Item05;
+                        vloValor = FacturaElectronicaMedioPago.Item05;
                         break;
                     default:
-                        vloValor = TiqueteElectronicoMedioPago.Item99;
+                        vloValor = FacturaElectronicaMedioPago.Item99;
                         break;
 
                 }
@@ -601,12 +590,12 @@ namespace CR.FacturaElectronica.Tiquete
             }
         }
 
-        private IdentificacionTypeTipo ObtenertipoIdentificacion(string pvcTipoIdentificacionReceptor)
+        private IdentificacionTypeTipo ObtenertipoIdentificacion(string vlcTipoIdentificacionReceptor)
         {
             IdentificacionTypeTipo vloRespuesta;
             try
             {
-                switch (pvcTipoIdentificacionReceptor)
+                switch (vlcTipoIdentificacionReceptor)
                 {
                     case "01":
                         vloRespuesta = IdentificacionTypeTipo.Item01;
@@ -617,12 +606,11 @@ namespace CR.FacturaElectronica.Tiquete
                     case "03":
                         vloRespuesta = IdentificacionTypeTipo.Item03;
                         break;
-                    case "04":
+                    default:
                         vloRespuesta = IdentificacionTypeTipo.Item04;
                         break;
-                    default:
-                        vloRespuesta = IdentificacionTypeTipo.Item01;
-                        break;
+
+
 
                 }
                 return vloRespuesta;
@@ -635,40 +623,40 @@ namespace CR.FacturaElectronica.Tiquete
             }
         }
 
-        private TiqueteElectronicoInformacionReferenciaTipoDoc DefinirReferenciaTipoDoc(string pvcTipoDocRef)
+        private FacturaElectronicaInformacionReferenciaTipoDoc DefinirReferenciaTipoDoc(string pvcTipoDocRef)
         {
-            TiqueteElectronicoInformacionReferenciaTipoDoc vloRes;
+            FacturaElectronicaInformacionReferenciaTipoDoc vloRes;
             try
             {
                 switch (pvcTipoDocRef)
                 {
                     /// <comentarios/>
                     case "01":
-                        vloRes = TiqueteElectronicoInformacionReferenciaTipoDoc.Item01;
+                        vloRes = FacturaElectronicaInformacionReferenciaTipoDoc.Item01;
                         break;
                     case "02":
-                        vloRes = TiqueteElectronicoInformacionReferenciaTipoDoc.Item02;
+                        vloRes = FacturaElectronicaInformacionReferenciaTipoDoc.Item02;
                         break;
                     case "03":
-                        vloRes = TiqueteElectronicoInformacionReferenciaTipoDoc.Item03;
+                        vloRes = FacturaElectronicaInformacionReferenciaTipoDoc.Item03;
                         break;
                     case "04":
-                        vloRes = TiqueteElectronicoInformacionReferenciaTipoDoc.Item04;
+                        vloRes = FacturaElectronicaInformacionReferenciaTipoDoc.Item04;
                         break;
                     case "05":
-                        vloRes = TiqueteElectronicoInformacionReferenciaTipoDoc.Item05;
+                        vloRes = FacturaElectronicaInformacionReferenciaTipoDoc.Item05;
                         break;
                     case "06":
-                        vloRes = TiqueteElectronicoInformacionReferenciaTipoDoc.Item06;
+                        vloRes = FacturaElectronicaInformacionReferenciaTipoDoc.Item06;
                         break;
                     case "07":
-                        vloRes = TiqueteElectronicoInformacionReferenciaTipoDoc.Item07;
+                        vloRes = FacturaElectronicaInformacionReferenciaTipoDoc.Item07;
                         break;
                     case "08":
-                        vloRes = TiqueteElectronicoInformacionReferenciaTipoDoc.Item08;
+                        vloRes = FacturaElectronicaInformacionReferenciaTipoDoc.Item08;
                         break;
                     default:
-                        vloRes = TiqueteElectronicoInformacionReferenciaTipoDoc.Item99;
+                        vloRes = FacturaElectronicaInformacionReferenciaTipoDoc.Item99;
                         break;
                 }
                 return vloRes;
@@ -679,33 +667,32 @@ namespace CR.FacturaElectronica.Tiquete
                 throw;
             }
             
-            
         }
 
-        private TiqueteElectronicoInformacionReferenciaCodigo DefinirCodigoReferencia(string pvcCodigo)
+        private FacturaElectronicaInformacionReferenciaCodigo DefinirCodigoReferencia(string pvcCodigo)
         {
-            TiqueteElectronicoInformacionReferenciaCodigo vloRes;
+            FacturaElectronicaInformacionReferenciaCodigo vloRes;
             try
             {
                 switch (pvcCodigo)
                 {
                     case "01":
-                        vloRes = TiqueteElectronicoInformacionReferenciaCodigo.Item01;
+                        vloRes = FacturaElectronicaInformacionReferenciaCodigo.Item01;
                         break;
                     case "02":
-                        vloRes = TiqueteElectronicoInformacionReferenciaCodigo.Item02;
+                        vloRes = FacturaElectronicaInformacionReferenciaCodigo.Item02;
                         break;
                     case "03":
-                        vloRes = TiqueteElectronicoInformacionReferenciaCodigo.Item03;
+                        vloRes = FacturaElectronicaInformacionReferenciaCodigo.Item03;
                         break;
                     case "04":
-                        vloRes = TiqueteElectronicoInformacionReferenciaCodigo.Item04;
+                        vloRes = FacturaElectronicaInformacionReferenciaCodigo.Item04;
                         break;
                     case "05":
-                        vloRes = TiqueteElectronicoInformacionReferenciaCodigo.Item05;
+                        vloRes = FacturaElectronicaInformacionReferenciaCodigo.Item05;
                         break;
                     default:
-                        vloRes = TiqueteElectronicoInformacionReferenciaCodigo.Item99;
+                        vloRes = FacturaElectronicaInformacionReferenciaCodigo.Item99;
                         break;
                 }
                 return vloRes;
@@ -716,7 +703,6 @@ namespace CR.FacturaElectronica.Tiquete
                 throw;
             }
         }
-
         #endregion
     }
 }
