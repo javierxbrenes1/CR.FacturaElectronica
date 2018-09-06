@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CR.FacturaElectronica.Entidades
+namespace CR.FacturaElectronica.Procesos
 {
-    public class ConfiguracionContactoReceptor
+    class DespachadorRespuestasAEmisores
     {
     }
 }
