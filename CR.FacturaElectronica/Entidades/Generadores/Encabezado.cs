@@ -8,7 +8,7 @@ namespace CR.FacturaElectronica.Entidades
         internal string Clave { get; set; }
         internal string NumeroConsecutivo { get; set; }
         internal DateTime FechaEmision { get; set; }
-        public Persona Emisor { get; set; }
+        internal Persona Emisor { get; set; }
         public Persona Receptor { get; set; }
         public string[] MediosPago { get; set; }
         public string CondicionVenta { get; set; }

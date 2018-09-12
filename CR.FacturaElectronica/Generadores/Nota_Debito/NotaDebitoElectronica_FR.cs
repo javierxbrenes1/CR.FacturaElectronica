@@ -349,7 +349,6 @@ namespace CR.FacturaElectronica.Nota_Debito
         }
 
         /// <comentarios/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
         public TelefonoType Fax
         {
             get

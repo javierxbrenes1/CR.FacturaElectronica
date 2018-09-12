@@ -296,6 +296,8 @@ namespace CR.FacturaElectronica.Tiquete
 
         private TelefonoType faxField;
 
+        //private bool faxFieldSpecified;
+
         private string correoElectronicoField;
 
         /// <comentarios/>
@@ -365,7 +367,6 @@ namespace CR.FacturaElectronica.Tiquete
         }
 
         /// <comentarios/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
         public TelefonoType Fax
         {
             get
@@ -377,6 +378,12 @@ namespace CR.FacturaElectronica.Tiquete
                 this.faxField = value;
             }
         }
+
+        //[System.Xml.Serialization.XmlIgnoreAttribute()]
+        //public bool FaxFieldSpecified {
+        //    get { return this.faxFieldSpecified; }
+        //    set { this.faxFieldSpecified = value; }
+        //}
 
         /// <comentarios/>
         public string CorreoElectronico

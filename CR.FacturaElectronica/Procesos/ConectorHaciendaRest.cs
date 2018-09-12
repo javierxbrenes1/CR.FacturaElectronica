@@ -41,10 +41,12 @@ namespace CR.FacturaElectronica.Procesos
             }
         }
 
-        public PostRespuestaEnvioHacienda EnviarDocumento(string data)
+        public PostRespuestaEnvioHacienda EnviarDocumentoAHacienda(DocumentoDto data)
         {
             var respuesta = new PostRespuestaEnvioHacienda();
-            var respuestaApi = PostDocumento(data);
+            respuesta.Clave = data.clave;
+
+            var respuestaApi = PostDocumento(ConvertirObjetoAEnviarEnJson(data));
             respuesta.TramaRecibida = respuestaApi.Content.ReadAsStringAsync().Result;
             if (string.IsNullOrEmpty(respuesta.TramaRecibida)) respuesta.TramaRecibida = respuestaApi.ToString();
             respuesta.Mensaje = respuestaApi.ReasonPhrase;
@@ -67,7 +69,23 @@ namespace CR.FacturaElectronica.Procesos
             return respuesta;
         }
 
-        public GetRespuestaConsultaHacienda ConsultarDocumento(string clave, string urlConsultaAlmacenada = "")
+        private string ConvertirObjetoAEnviarEnJson(DocumentoDto documento)
+        {
+            documento.comprobanteXml = ConvertirStringABase64(documento.comprobanteXml);
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(documento, 
+                Newtonsoft.Json.Formatting.None, 
+                new Newtonsoft.Json.JsonSerializerSettings() {
+                NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore
+            });
+        }
+
+        private string ConvertirStringABase64(string xmlFactura)
+        {
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(xmlFactura));
+        }
+
+        public GetRespuestaConsultaHacienda ConsultarDocumentoEnHacienda(string clave, string urlConsultaAlmacenada = "")
         {
             var respuesta = new GetRespuestaConsultaHacienda();
             var respuestaApi = GetDocumento(clave, urlConsultaAlmacenada);

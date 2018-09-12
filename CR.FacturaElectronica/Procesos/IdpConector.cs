@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace CR.FacturaElectronica.Procesos
 {
@@ -13,6 +14,7 @@ namespace CR.FacturaElectronica.Procesos
         public TokenDto TokenInfo { get; set; }
         private const string cGRANT_TYPE_REFRESH = "refresh_token";
         private readonly ConfiguracionComunicacionHacienda _configuracion;
+
         public IdpConector(ConfiguracionComunicacionHacienda configuracionComunicacion)
         {
             this._configuracion = configuracionComunicacion;
@@ -32,27 +34,41 @@ namespace CR.FacturaElectronica.Procesos
                 respuestaApi.EnsureSuccessStatusCode();
 
                 var contenidoJson = respuestaApi.Content.ReadAsStringAsync().Result;
-                TokenInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<TokenDto>(contenidoJson);
+                var objeto = new Object();
+                lock (objeto)
+                {
+                    TokenInfo = Newtonsoft.Json.JsonConvert.DeserializeObject<TokenDto>(contenidoJson);
+                }
             }
         }
 
+
+        
+
         public bool CerrarSesionIdp()
         {
-            using (HttpClient cliente = new HttpClient())
+            try
             {
-                cliente.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(_configuracion.TipoAutenticacion, TokenInfo.access_token);
-                cliente.BaseAddress = new Uri(_configuracion.UrlIdpLogOut);
-                cliente.DefaultRequestHeaders.Accept.Clear();
-                cliente.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                var datosEnvio = new List<KeyValuePair<string, string>>();
-                datosEnvio.Add(new KeyValuePair<string, string>("refresh_token", TokenInfo.refresh_token));
-                datosEnvio.Add(new KeyValuePair<string, string>("client_id", _configuracion.ClientID));
-                var contenido = new FormUrlEncodedContent(datosEnvio);
-                var respuestaApi = cliente.PostAsync("logout", contenido).Result;
+                using (HttpClient cliente = new HttpClient())
+                {
+                    cliente.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(_configuracion.TipoAutenticacion, TokenInfo.access_token);
+                    cliente.BaseAddress = new Uri(_configuracion.UrlIdpLogOut);
+                    cliente.DefaultRequestHeaders.Accept.Clear();
+                    cliente.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    var datosEnvio = new List<KeyValuePair<string, string>>();
+                    datosEnvio.Add(new KeyValuePair<string, string>("refresh_token", TokenInfo.refresh_token));
+                    datosEnvio.Add(new KeyValuePair<string, string>("client_id", _configuracion.ClientID));
+                    var contenido = new FormUrlEncodedContent(datosEnvio);
+                    var respuestaApi = cliente.PostAsync("logout", contenido).Result;
 
-                return respuestaApi.StatusCode == System.Net.HttpStatusCode.NoContent;
-
+                    return respuestaApi.StatusCode == System.Net.HttpStatusCode.NoContent;
+                }
             }
+            catch (Exception)
+            {
+                return false;
+            }
+            
         }
 
         private List<KeyValuePair<string, string>> ParametrosIdp(bool esRefrescamiento)

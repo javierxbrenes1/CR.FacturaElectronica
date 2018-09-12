@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace CR.FacturaElectronica.Interfaces
 {
-   public interface IGeneradorDocumentos
+   public interface ICreadorDocumentos
     {
-        RespuestaCreacionDoc GenerarDocumentoXML(DocumentoParametros documentoParametros);
+        RespuestaCreacionDoc CrearDocumentoXML(DocumentoParametros documentoParametros);
     }
 }
  

@@ -9,6 +9,6 @@ namespace CR.FacturaElectronica.Interfaces
 {
     public interface IProceso<TRespuesta, TDocumento>
     {
-        ConcurrentBag<TRespuesta> EjecutarProceso(IEnumerable<TDocumento> documentosAProcesar);
+        List<TRespuesta> EjecutarProceso(IEnumerable<TDocumento> documentosAProcesar);
     }
 }

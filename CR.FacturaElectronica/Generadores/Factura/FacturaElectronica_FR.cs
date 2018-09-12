@@ -351,7 +351,6 @@ namespace CR.FacturaElectronica.Factura
         }
 
         /// <comentarios/>
-        [System.Xml.Serialization.XmlElementAttribute(IsNullable = true)]
         public TelefonoType Fax
         {
             get

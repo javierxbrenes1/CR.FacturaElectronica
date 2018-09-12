@@ -7,7 +7,7 @@ using CR.FacturaElectronica.Entidades;
 
 namespace CR.FacturaElectronica
 {
-    internal interface IGeneradorDocumento
+    public interface IDocumentoProcesador
     {
 
         #region Propiedades

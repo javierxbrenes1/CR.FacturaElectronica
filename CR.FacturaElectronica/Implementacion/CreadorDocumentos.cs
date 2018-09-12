@@ -9,23 +9,23 @@ using CR.FacturaElectronica.Shared;
 
 namespace CR.FacturaElectronica
 {
-    public class GeneradorDocumentos : IGeneradorDocumentos
+    public class CreadorDocumentos : ICreadorDocumentos
     {
 
         private readonly ConfiguracionCreacionDocumentos _configuracion;
-        private readonly IGeneradorDocumentoFactory _generadorDocumentoFactory;
+        private readonly IDocumentoProcesadorFactory _generadorDocumentoFactory;
         private readonly IFirmadorElectronico _firmadorElectronico;
 
-        public GeneradorDocumentos(ConfiguracionCreacionDocumentos configuracion)
+        public CreadorDocumentos(ConfiguracionCreacionDocumentos configuracion)
         {
             this._configuracion = configuracion;
-            this._generadorDocumentoFactory = new GeneradorDocumentoFactory();
+            this._generadorDocumentoFactory = new DocumentoProcesadorFactory();
             this._firmadorElectronico = new FirmadorElectronico(configuracion);
         }
 
         #region Metodos de interfaz
 
-        public RespuestaCreacionDoc GenerarDocumentoXML(DocumentoParametros docParams)
+        public RespuestaCreacionDoc CrearDocumentoXML(DocumentoParametros docParams)
         {
             
             var respuesta = new RespuestaCreacionDoc();
@@ -33,6 +33,8 @@ namespace CR.FacturaElectronica
             {
                 //define la fecha de emision
                 docParams.Encabezado.FechaEmision = DateTime.Now;
+                //define el emisor
+                docParams.Encabezado.Emisor = _configuracion.EmisorInformacion;
                 //define el consecutivo
                 docParams.Encabezado.NumeroConsecutivo = GenerarConsecutivo(docParams.Sucursal, docParams.Terminal,
                     docParams.ConsecutivoSistema, docParams.TipoDocumento);
@@ -69,17 +71,20 @@ namespace CR.FacturaElectronica
         private string GuardarElXMlParaFirmarlo(string clave, string xml)
         {
             var ruta = _configuracion.RutaXMLRespaldos;
-            var noHayRuta = string.IsNullOrEmpty(ruta) || !Directory.Exists(_configuracion.RutaXMLRespaldos);
-            if (!noHayRuta)
-                ruta = $"{Environment.CurrentDirectory}" ;
+           if (string.IsNullOrEmpty(ruta))
+                ruta = $"{Environment.CurrentDirectory}\\XMLS" ;
+
+            if (!Directory.Exists(ruta))
+                Directory.CreateDirectory(ruta);
+
             ruta = $"{ruta}\\{clave}.xml";
             File.WriteAllText(ruta , xml);
             return ruta;
 
         }
 
-        private string GenerarConsecutivo(int sucursal, int terminal, long consecutivo, 
-            DocumentoParametros.enmTipoDocumento tipoDocumento)
+        private string GenerarConsecutivo(int sucursal, int terminal, long consecutivo,
+            EnumeradoresFEL.enmTipoDocumento tipoDocumento)
         {
             return  $"{sucursal.ToString().PadLeft(3,'0')}" +
                     $"{terminal.ToString().PadRight(5, '0')}" +
@@ -97,9 +102,9 @@ namespace CR.FacturaElectronica
             var cedulaEmisor = _configuracion.EmisorInformacion.NumeroIdentificacion.PadLeft(12, '0');
 
             var docSituacion = esUnReproceso ? 
-                Enumeradores.enmSituacionComprobante.Contingencia :
-                _configuracion.HayInternet ? Enumeradores.enmSituacionComprobante.Normal :
-                Enumeradores.enmSituacionComprobante.Sin_Internet;
+                EnumeradoresFEL.enmSituacionComprobante.Contingencia :
+                _configuracion.HayInternet ? EnumeradoresFEL.enmSituacionComprobante.Normal :
+                EnumeradoresFEL.enmSituacionComprobante.Sin_Internet;
 
             return $"{Constantes.PAIS_CODIGO}{dia}{mes}{anno}{cedulaEmisor}{consecutivo}{(int)docSituacion}{codigoSeguridad}";
         }

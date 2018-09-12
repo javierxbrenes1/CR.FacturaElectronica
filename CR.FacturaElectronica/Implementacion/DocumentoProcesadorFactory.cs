@@ -1,31 +1,31 @@
-﻿using CR.FacturaElectronica.Entidades;
-using CR.FacturaElectronica.Factura;
+﻿using CR.FacturaElectronica.Factura;
 using CR.FacturaElectronica.Interfaces;
 using CR.FacturaElectronica.Nota_Credito;
 using CR.FacturaElectronica.Nota_Debito;
+using CR.FacturaElectronica.Shared;
 using CR.FacturaElectronica.Tiquete;
-using System;
+
 
 
 namespace CR.FacturaElectronica
 {
-    internal class GeneradorDocumentoFactory : IGeneradorDocumentoFactory
+    public class DocumentoProcesadorFactory : IDocumentoProcesadorFactory
     {
-        public IGeneradorDocumento ResolverInstancia(DocumentoParametros.enmTipoDocumento tipoDoc)
+        public  IDocumentoProcesador ResolverInstancia(EnumeradoresFEL.enmTipoDocumento tipoDoc)
         {
-            IGeneradorDocumento generadorDocumento;
+            IDocumentoProcesador generadorDocumento;
             switch (tipoDoc)
             {
-                case DocumentoParametros.enmTipoDocumento.Factura:
+                case EnumeradoresFEL.enmTipoDocumento.Factura:
                     generadorDocumento = new FacturaElectronicaProcesador();
                     break;
-                case DocumentoParametros.enmTipoDocumento.Tiquete:
+                case EnumeradoresFEL.enmTipoDocumento.Tiquete:
                     generadorDocumento = new TiqueteProcesador();
                     break;
-                case DocumentoParametros.enmTipoDocumento.NotaDebito:
+                case EnumeradoresFEL.enmTipoDocumento.NotaDebito:
                     generadorDocumento = new NotaDebitoProcesador();
                     break;
-                case DocumentoParametros.enmTipoDocumento.NotaCredito:
+                case EnumeradoresFEL.enmTipoDocumento.NotaCredito:
                     generadorDocumento = new NotaCreditoProcesador();
                     break;
                 default:

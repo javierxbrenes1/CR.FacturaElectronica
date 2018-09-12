@@ -47,17 +47,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Entidades\Generadores\ConfiguracionEnvioDocumentos.cs" />
+    <Compile Include="Entidades\Generadores\ConfiguracionEnvioDocumentosAReceptor.cs" />
     <Compile Include="Entidades\Generadores\ConfiguracionCreacionDocumentos.cs" />
     <Compile Include="Entidades\Generadores\ConfiguracionComunicacionHacienda.cs" />
     <Compile Include="Entidades\Generadores\DocumentoParametros.cs" />
     <Compile Include="Entidades\Generadores\DocumentoReferencia.cs" />
     <Compile Include="Entidades\Generadores\Encabezado.cs" />
+    <Compile Include="Entidades\Generadores\Exoneracion.cs" />
     <Compile Include="Entidades\Generadores\Impuesto.cs" />
     <Compile Include="Entidades\Generadores\Persona.cs" />
     <Compile Include="Entidades\Procesos\GetRespuestaConsultaHacienda.cs" />
     <Compile Include="Entidades\Procesos\PersonaDocumentoDto.cs" />
-    <Compile Include="Entidades\Generadores\Producto.cs" />
+    <Compile Include="Entidades\Generadores\LineaDetalle.cs" />
     <Compile Include="Entidades\Generadores\Resumen.cs" />
     <Compile Include="Entidades\Generadores\Telefono.cs" />
     <Compile Include="Entidades\Procesos\EstadoDocumentoDto.cs" />
@@ -66,12 +67,12 @@
     <Compile Include="Entidades\Procesos\TokenDto.cs" />
     <Compile Include="Estructuras\RespuestaCreacionDoc.cs" />
     <Compile Include="Implementacion\FirmadorElectronico.cs" />
-    <Compile Include="Implementacion\GeneradorDocumentos.cs" />
-    <Compile Include="Implementacion\GeneradorDocumentoFactory.cs" />
-    <Compile Include="Interfaces\IDocumento.cs" />
+    <Compile Include="Implementacion\CreadorDocumentos.cs" />
+    <Compile Include="Implementacion\DocumentoProcesadorFactory.cs" />
+    <Compile Include="Interfaces\IDocumentoProcesador.cs" />
     <Compile Include="Interfaces\IFirmadorElectronico.cs" />
-    <Compile Include="Interfaces\IGeneradorDocumentos.cs" />
-    <Compile Include="Interfaces\IGeneradorDocumentoFactory.cs" />
+    <Compile Include="Interfaces\IDocumentoProcesadorFactory.cs" />
+    <Compile Include="Interfaces\ICreadorDocumentos.cs" />
     <Compile Include="Generadores\Factura\FacturaElectronicaProcesador.cs" />
     <Compile Include="Generadores\Factura\FacturaElectronica_FR.cs">
       <DependentUpon>FacturaElectronica_FR.xsd</DependentUpon>

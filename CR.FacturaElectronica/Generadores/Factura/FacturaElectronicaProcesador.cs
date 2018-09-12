@@ -10,7 +10,7 @@ using CR.FacturaElectronica.Shared;
 
 namespace CR.FacturaElectronica.Factura
 {
-    internal class FacturaElectronicaProcesador :IGeneradorDocumento
+    internal class FacturaElectronicaProcesador :IDocumentoProcesador
     {
         #region Propiedades
 
@@ -55,7 +55,7 @@ namespace CR.FacturaElectronica.Factura
                     vloProductoNodo.NumeroLinea = (vlnI + 1).ToString();
                     //Agrego el codigo 
                     vloProductoNodo.Codigo = new CodigoType[1];
-                    vloProductoNodo.Codigo[0] = new CodigoType() { Tipo = ObtenerTipoCodigoProducto(vloProducto.tipoCodigo), Codigo = vloProducto.Codigo };
+                    vloProductoNodo.Codigo[0] = new CodigoType() { Tipo = ObtenerTipoCodigoProducto(vloProducto.TipoCodigo), Codigo = vloProducto.Codigo };
                     //Agrego la cantidad de productos 
                     vloProductoNodo.Cantidad = vloProducto.Cantidad;
                     //Agrego la unidad de medida
@@ -78,10 +78,10 @@ namespace CR.FacturaElectronica.Factura
                     //Agrega el monto del descuento
                     vloProductoNodo.MontoDescuento = vloProducto.MontoDescuento;
                     //<JBR08012018 >
-                    vloProductoNodo.MontoDescuentoSpecified = vloProducto.MostrarDescuento;//(vloProducto.MontoDescuento > 0);
+                    vloProductoNodo.MontoDescuentoSpecified = vloProducto.DebeMostrarDescuento;//(vloProducto.MontoDescuento > 0);
                     //Agrega la naturaleza del descuento 
                     vloProductoNodo.NaturalezaDescuento = vloProducto.NaturalezaDescuento;
-                    vloProductoNodo.NaturalezaDescuentoSpecified = vloProducto.MostrarDescuento;
+                    vloProductoNodo.NaturalezaDescuentoSpecified = vloProducto.DebeMostrarDescuento;
                     //</JBR08012018>
                     //Agrega el subtotal 
                     vloProductoNodo.SubTotal = vloProducto.SubTotal;
@@ -98,24 +98,22 @@ namespace CR.FacturaElectronica.Factura
                         vloProductoNodo.Impuesto[vlnJ] = new ImpuestoType() { Codigo = ObtenerCodigoImpuesto(vloImp.CodigoImpuesto), Tarifa = vloImp.Tarifa, Monto = vloImp.MontoImpuesto };
 
                         //Validar
-                        if (vloProducto.Exonerado)
+                        if (vloProducto.EsExonerado)
                         {
                             //Agrego la exoneracion
                             vloProductoNodo.Impuesto[vlnJ].Exoneracion = new ExoneracionType();
-                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.TipoDocumento = ObtenerTipoDocumento(vloProducto.TipoDocumento);
-                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.NumeroDocumento = vloProducto.NumeroDocumento;
-                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.FechaEmision = vloProducto.FechaEmision;
-                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.MontoImpuesto = vloProducto.MontoImpuestoExon;
-                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.PorcentajeCompra = Convert.ToInt32(vloProducto.PorcentajeCompra).ToString();
-                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.NombreInstitucion = vloProducto.NombreInstitucion;
+                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.TipoDocumento = ObtenerTipoDocumento(vloProducto.Exoneracion.TipoDocumento);
+                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.NumeroDocumento = vloProducto.Exoneracion.NumeroDocumento;
+                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.FechaEmision = vloProducto.Exoneracion.FechaEmision;
+                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.MontoImpuesto = vloProducto.Exoneracion.MontoImpuestoExon;
+                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.PorcentajeCompra = Convert.ToInt32(vloProducto.Exoneracion.PorcentajeCompra).ToString();
+                            vloProductoNodo.Impuesto[vlnJ].Exoneracion.NombreInstitucion = vloProducto.Exoneracion.NombreInstitucion;
                         }
                     }
 
                     //Agrega el monto total del producto
                     vloProductoNodo.MontoTotalLinea = vloProducto.MontoTotalLinea;
-                    //Redondea el producto
-                    //pRedondearMontos(ref vloProductoNodo, vlnParamTotalDecimales);
-                    //Agrega el producto 
+                  
                     vloArrProductosNodos[vlnI] = vloProductoNodo;
 
                 }
