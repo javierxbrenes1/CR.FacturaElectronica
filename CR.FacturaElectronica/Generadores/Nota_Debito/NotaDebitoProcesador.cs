@@ -23,12 +23,13 @@ namespace CR.FacturaElectronica.Nota_Debito
         public Resumen Resumen { get; set; }
 
         public DocumentoReferencia[] DocsReferencia { get; set; }
+        public Dictionary<string, string> SeccionOtros { get; set; }
 
         #endregion
 
         #region Funciones
 
-  
+
 
         // Obtiene la lista de detalles
         private NotaDebitoElectronicaLineaDetalle[] ObtenerDetalle(List<LineaDetalle> pvoListaProductos)

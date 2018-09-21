@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Text;
-using System.Threading.Tasks;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace CR.FacturaElectronica.Shared
 {
@@ -27,5 +27,25 @@ namespace CR.FacturaElectronica.Shared
                 throw;
             }
         }
+
+        internal static string ObtenerXMLComoString<T>(T documento)
+        {
+            XmlSerializer vloSerializador = new XmlSerializer(typeof(T));
+            XmlWriterSettings vloConfiguraciones = new XmlWriterSettings();
+            vloConfiguraciones.Encoding = new UnicodeEncoding(false, false);
+            vloConfiguraciones.Indent = true;
+            vloConfiguraciones.OmitXmlDeclaration = true;
+
+            using (StringWriter vloEscritor = new StringWriter())
+            {
+                using (XmlWriter xmlWriter = XmlWriter.Create(vloEscritor, vloConfiguraciones))
+                {
+                    vloSerializador.Serialize(xmlWriter, documento);
+                }
+                return vloEscritor.ToString();
+            }
+        }
     }
+
+    
 }

@@ -15,6 +15,7 @@ namespace CR.FacturaElectronica.Test
         {
             ICreadorDocumentos creador = new CreadorDocumentos(obtenerConfiguracion());
             var respuesta = creador.CrearDocumentoXML(obtenerDocumento());
+            Console.WriteLine(respuesta.ErrorMensaje);
         }
 
         private ConfiguracionCreacionDocumentos obtenerConfiguracion()
@@ -59,7 +60,7 @@ namespace CR.FacturaElectronica.Test
                 Codigo = "121",
                 Detalle = "nanzana",
                 EsExento = true,
-                EsExonerado = false,
+                EsExonerado = true,
                 DebeMostrarDescuento = false,
                 EsPesable = false,
                 EsServicio = false,
@@ -71,13 +72,34 @@ namespace CR.FacturaElectronica.Test
                 UnidadMedida = "Unid",
                 TipoCodigo = "1",
                 SubTotal = 100,
-                Impuestos = new List<Impuesto>(),
-                Exoneracion = new Exoneracion(),
+                Impuestos = getImpuestos(),
+                Exoneracion =  exo(),
                 NaturalezaDescuento = ""
             });
 
             return lista;
            
+        }
+
+        private List<Impuesto> getImpuestos()
+        {
+            var imp = new List<Impuesto>();
+            imp.Add(new Impuesto { Tarifa = 0, MontoImpuesto = 0, CodigoImpuesto = "99" });
+            return imp;
+        }
+
+        private Exoneracion exo()
+        {
+            return new Exoneracion()
+            {
+                FechaEmision = DateTime.Now,
+                MontoImpuestoExon = 12,
+                MontoTotalLinea = 12,
+                NombreInstitucion = "Liceo experimental",
+                NumeroDocumento = "123243",
+                PorcentajeCompra = 100,
+                TipoDocumento = "99"
+            };
         }
 
         private DocumentoParametros obtenerDocumento()
@@ -99,7 +121,7 @@ namespace CR.FacturaElectronica.Test
                 LineasDetalle = detalles(),
                 Sucursal = 1,
                 Terminal = 1,
-                TipoDocumento = Shared.EnumeradoresFEL.enmTipoDocumento.Tiquete,
+                TipoDocumento = Shared.EnumeradoresFEL.enmTipoDocumento.Factura,
                 Resumen = new Resumen()
                 {
                     Moneda = "CRC",
@@ -118,8 +140,15 @@ namespace CR.FacturaElectronica.Test
                 },
                 DocumentosReferencia = new List<DocumentoReferencia>()
             };
-            
 
+            p.DocumentosReferencia.Add(new DocumentoReferencia()
+            {
+                Codigo = "",
+                FechaEmision = DateTime.Now,
+                Numero = "32323232",
+                Razon = "prueba",
+                TipoDoc = "00"
+            });
 
 
             return p;

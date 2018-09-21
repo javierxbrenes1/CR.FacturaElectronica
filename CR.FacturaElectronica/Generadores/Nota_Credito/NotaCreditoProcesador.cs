@@ -27,11 +27,12 @@ namespace CR.FacturaElectronica.Nota_Credito
         public Resumen Resumen { get; set; }
 
         public DocumentoReferencia[] DocsReferencia { get; set; }
+        public Dictionary<string, string> SeccionOtros { get; set; }
 
         #endregion
 
         #region Funciones
-        
+
 
         // Retorna la ruta donde creo el archivo
         // Retorna la ruta donde creo el archivo

@@ -16,6 +16,7 @@ namespace CR.FacturaElectronica
         Encabezado Encabezado { get; set; }
         Resumen Resumen { get; set; }
         DocumentoReferencia[] DocsReferencia { get; set; }
+        Dictionary<string, string> SeccionOtros { get; set; }
 
         #endregion
 

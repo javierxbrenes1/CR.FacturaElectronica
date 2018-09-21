@@ -10,9 +10,18 @@ namespace CR.FacturaElectronica.Test
     {
         static void Main(string[] args)
         {
-            var generador = new GenerarDocumentoElectronico();
+            try
+            {
+                var generador = new GenerarDocumentoElectronico();
 
-            generador.GenerarXMl();
+                generador.GenerarXMl();
+                
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            Console.ReadKey();
         }
     }
 }

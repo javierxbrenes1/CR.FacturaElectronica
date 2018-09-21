@@ -30,6 +30,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=7.0.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.7.0.1\lib\net45\AutoMapper.dll</HintPath>
+    </Reference>
     <Reference Include="FirmaXadesNet, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Debug\FirmaXadesNet.dll</HintPath>
@@ -39,6 +42,10 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -66,6 +73,18 @@
     <Compile Include="Entidades\Procesos\PostRespuestaEnvioHacienda.cs" />
     <Compile Include="Entidades\Procesos\TokenDto.cs" />
     <Compile Include="Estructuras\RespuestaCreacionDoc.cs" />
+    <Compile Include="Generadores\Factura\FacturaEnumeradores.cs" />
+    <Compile Include="Generadores\Factura\FacturaCreadorDocumentoReferencia.cs" />
+    <Compile Include="Generadores\Factura\FacturaCreadorEmisor.cs" />
+    <Compile Include="Generadores\Factura\FacturaCreadorResumen.cs" />
+    <Compile Include="Generadores\Factura\FacturaCreadorSeccionOtros.cs" />
+    <Compile Include="Generadores\Factura\FacturaCrearReceptor.cs" />
+    <Compile Include="Generadores\Factura\FacturaDefinidorDetalles.cs" />
+    <Compile Include="Generadores\Interfaces\ICreadorDocumentoReferencia.cs" />
+    <Compile Include="Generadores\Interfaces\ICreadorOtros.cs" />
+    <Compile Include="Generadores\Interfaces\ICreadorPersona.cs" />
+    <Compile Include="Generadores\Interfaces\ICreadorResumen.cs" />
+    <Compile Include="Generadores\Interfaces\IDefinidorDetalles.cs" />
     <Compile Include="Implementacion\FirmadorElectronico.cs" />
     <Compile Include="Implementacion\CreadorDocumentos.cs" />
     <Compile Include="Implementacion\DocumentoProcesadorFactory.cs" />

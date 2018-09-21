@@ -27,7 +27,6 @@ namespace CR.FacturaElectronica
 
         public RespuestaCreacionDoc CrearDocumentoXML(DocumentoParametros docParams)
         {
-            
             var respuesta = new RespuestaCreacionDoc();
             try
             {
@@ -62,6 +61,7 @@ namespace CR.FacturaElectronica
             catch (Exception ex)
             {
                 respuesta.ErrorMensaje = ex.Message;
+                
                 respuesta.EstadoDocumento = RespuestaCreacionDoc.enmEstadoDocumento.NoCreado;
                 respuesta.NuevoConsecutivoSistema = docParams.ConsecutivoSistema;
             }
