@@ -150,6 +150,15 @@ namespace CR.FacturaElectronica.Test
                 TipoDoc = "00"
             });
 
+            p.SeccionOtros = new Dictionary<string, string>();
+            p.SeccionOtros.Add("llave 1", "valor 1");
+            p.SeccionOtros.Add("llave 2", "valor 2");
+            p.SeccionOtros.Add("llave 3", "valor 3");
+            p.SeccionOtros.Add("llave 4", "valor 4");
+            p.SeccionOtros.Add("llave 5", "valor 5");
+            p.SeccionOtros.Add("llave 6", "valor 6");
+            p.SeccionOtros.Add("llave 7", "valor 7");
+            p.SeccionOtros.Add("llave 8", "valor 8");
 
             return p;
         }

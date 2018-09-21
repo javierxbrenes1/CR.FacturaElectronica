@@ -30,28 +30,20 @@ namespace CR.FacturaElectronica
             var respuesta = new RespuestaCreacionDoc();
             try
             {
-                //define la fecha de emision
                 docParams.Encabezado.FechaEmision = DateTime.Now;
-                //define el emisor
                 docParams.Encabezado.Emisor = _configuracion.EmisorInformacion;
-                //define el consecutivo
                 docParams.Encabezado.NumeroConsecutivo = GenerarConsecutivo(docParams.Sucursal, docParams.Terminal,
                     docParams.ConsecutivoSistema, docParams.TipoDocumento);
-                //define la clave
                 docParams.Encabezado.Clave = GenerarClave(docParams.Encabezado.NumeroConsecutivo, docParams.Encabezado.FechaEmision,
                     GeneraTokenSeguridad(8), docParams.EsUnReproceso);
-                //resuelve el generado del documento
                 var generador = _generadorDocumentoFactory.ResolverInstancia(docParams.TipoDocumento);
-                //le envia los parametros
                 generador.Encabezado = docParams.Encabezado;
                 generador.DocsReferencia = docParams.DocumentosReferencia.ToArray();
                 generador.Productos = docParams.LineasDetalle;
                 generador.Resumen = docParams.Resumen;
-
+                generador.SeccionOtros = docParams.SeccionOtros;
                 var xml = generador.CrearXML();
-
                 var rutaGuardado = GuardarElXMlParaFirmarlo(docParams.Encabezado.Clave, xml);
-
                 respuesta.XmlDocCreado = _firmadorElectronico.FirmarDocumento(rutaGuardado);
                 respuesta.ConsecutivoDocCreado = docParams.Encabezado.NumeroConsecutivo;
                 respuesta.ClaveDocCreada = docParams.Encabezado.Clave;

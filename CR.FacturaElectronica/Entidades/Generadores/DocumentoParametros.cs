@@ -21,6 +21,8 @@ namespace CR.FacturaElectronica.Entidades
         public Resumen Resumen { get; set; }
         public List<DocumentoReferencia> DocumentosReferencia { get; set; }
 
+        public Dictionary<string, string> SeccionOtros { get; set; }
+
         public  bool EsUnReproceso { get; set; }
     }
 }
