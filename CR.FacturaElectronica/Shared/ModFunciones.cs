@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
@@ -44,6 +45,34 @@ namespace CR.FacturaElectronica.Shared
                 }
                 return vloEscritor.ToString();
             }
+        }
+
+        internal static T ObtenerValorEnumerador<T>(string valor, T valorDefault)
+        {
+            try
+            {
+                foreach (object item in Enum.GetValues(typeof(T)))
+                {
+                    T valorEnum = (T)item;
+                    if (GetXmlAttrUsandoElValor<T>(valorEnum).Equals(valor, StringComparison.OrdinalIgnoreCase))
+                        return (T)item;
+                }
+                
+            }
+            catch (Exception)
+            {
+                //No hace nada
+            }
+            return valorDefault;
+            
+        }
+
+        private static string GetXmlAttrUsandoElValor<T>(T valorEnum)
+        {
+            Type type = valorEnum.GetType();
+            FieldInfo info = type.GetField(Enum.GetName(typeof(T), valorEnum));
+            XmlEnumAttribute att = (XmlEnumAttribute)info.GetCustomAttributes(typeof(XmlEnumAttribute), false)[0];
+            return att.Name;
         }
     }
 

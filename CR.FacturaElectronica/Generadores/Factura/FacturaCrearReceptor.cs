@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CR.FacturaElectronica.Entidades;
+using CR.FacturaElectronica.Shared;
 
 namespace CR.FacturaElectronica.Factura
 {
@@ -27,7 +28,7 @@ namespace CR.FacturaElectronica.Factura
             {
                 receptor.Identificacion = new IdentificacionType()
                 {
-                    Tipo = FacturaEnumeradores.ObtenertipoIdentificacion(personaDelSistema.TipoIdentificacion),
+                    Tipo = ModFunciones.ObtenerValorEnumerador(personaDelSistema.TipoIdentificacion, IdentificacionTypeTipo.Item04),
                     Numero = personaDelSistema.NumeroIdentificacion
                 };
             }

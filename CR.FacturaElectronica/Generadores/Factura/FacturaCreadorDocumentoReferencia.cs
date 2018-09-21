@@ -2,7 +2,7 @@
 using CR.FacturaElectronica.Entidades;
 using CR.FacturaElectronica.Factura;
 using CR.FacturaElectronica.Generadores.Interfaces;
-
+using CR.FacturaElectronica.Shared;
 
 namespace CR.FacturaElectronica.Factura
 {
@@ -28,8 +28,8 @@ namespace CR.FacturaElectronica.Factura
             for (int i = 0; i < referenciasSistema.Length; i++)
             {
                 refAux = mapper.Map<FacturaElectronicaInformacionReferencia>(referenciasSistema[i]);
-                refAux.Codigo = FacturaEnumeradores.DefinirCodigoReferencia(referenciasSistema[i].Codigo);
-                refAux.TipoDoc = FacturaEnumeradores.DefinirReferenciaTipoDoc(referenciasSistema[i].TipoDoc);
+                refAux.Codigo = ModFunciones.ObtenerValorEnumerador(referenciasSistema[i].Codigo, FacturaElectronicaInformacionReferenciaCodigo.Item99);
+                refAux.TipoDoc = ModFunciones.ObtenerValorEnumerador(referenciasSistema[i].TipoDoc, FacturaElectronicaInformacionReferenciaTipoDoc.Item99);
                 arregloFelDocsReferencias[i] = refAux;
             }
             return arregloFelDocsReferencias;

@@ -1,5 +1,6 @@
 ﻿using System;
 using CR.FacturaElectronica.Entidades;
+using CR.FacturaElectronica.Shared;
 
 namespace CR.FacturaElectronica.Factura
 {
@@ -12,7 +13,7 @@ namespace CR.FacturaElectronica.Factura
                 Nombre = personaDelSistema.Nombre,
                 Identificacion = new IdentificacionType()
                 {
-                    Tipo = FacturaEnumeradores.ObtenertipoIdentificacion(personaDelSistema.TipoIdentificacion),
+                    Tipo = ModFunciones.ObtenerValorEnumerador(personaDelSistema.TipoIdentificacion, IdentificacionTypeTipo.Item04),
                     Numero = personaDelSistema.NumeroIdentificacion
                 },
                 NombreComercial = personaDelSistema.NombreComercial,

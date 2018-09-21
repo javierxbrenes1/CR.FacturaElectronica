@@ -33,7 +33,7 @@ namespace CR.FacturaElectronica.Factura
             factura.FechaEmision = Encabezado.FechaEmision;
             factura.Emisor = new FacturaCreadorEmisor().CrearPersona(Encabezado.Emisor);
             factura.Receptor = new FacturaCreadorReceptor().CrearPersona(Encabezado.Receptor);
-            factura.CondicionVenta = FacturaEnumeradores.ObtenerCondicionVenta(Encabezado.CondicionVenta);
+            factura.CondicionVenta = ModFunciones.ObtenerValorEnumerador(Encabezado.CondicionVenta, FacturaElectronicaCondicionVenta.Item99);
             factura.PlazoCredito = Encabezado.PlazoCredito;
             factura.MedioPago = AsignarMediosPago();
             factura.DetalleServicio = new FacturaDefinidorDetalles().DefinirDetalles(Productos);
@@ -49,7 +49,7 @@ namespace CR.FacturaElectronica.Factura
             var medioPagos = new FacturaElectronicaMedioPago[Encabezado.MediosPago.Length];
             for (int i = 0; i < Encabezado.MediosPago.Length; i++)
             {
-                medioPagos[i] = FacturaEnumeradores.ObtenerMedioPago(Encabezado.MediosPago[i]);
+                medioPagos[i] = ModFunciones.ObtenerValorEnumerador(Encabezado.MediosPago[i], FacturaElectronicaMedioPago.Item99);
             }
             return medioPagos;
         }

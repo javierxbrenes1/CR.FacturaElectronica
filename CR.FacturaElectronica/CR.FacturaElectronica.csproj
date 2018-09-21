@@ -73,7 +73,6 @@
     <Compile Include="Entidades\Procesos\PostRespuestaEnvioHacienda.cs" />
     <Compile Include="Entidades\Procesos\TokenDto.cs" />
     <Compile Include="Estructuras\RespuestaCreacionDoc.cs" />
-    <Compile Include="Generadores\Factura\FacturaEnumeradores.cs" />
     <Compile Include="Generadores\Factura\FacturaCreadorDocumentoReferencia.cs" />
     <Compile Include="Generadores\Factura\FacturaCreadorEmisor.cs" />
     <Compile Include="Generadores\Factura\FacturaCreadorResumen.cs" />

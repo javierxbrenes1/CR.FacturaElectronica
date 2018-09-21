@@ -49,7 +49,7 @@ namespace CR.FacturaElectronica.Factura
 
                 detalleFel = mapper.Map<FacturaElectronicaLineaDetalle>(detalleSistema);
                 detalleFel.Codigo = GetCodigoDetalle(detalleSistema.Codigo, detalleSistema.TipoCodigo);
-                detalleFel.UnidadMedida = FacturaEnumeradores.getUnidadDeMedida(detalleSistema.UnidadMedida);
+                detalleFel.UnidadMedida = ModFunciones.ObtenerValorEnumerador(detalleSistema.UnidadMedida, UnidadMedidaType.Unid);
                 detalleFel.Impuesto = GetImpuesto(detalleSistema);
                 arrDetalles[contadorLinea] = detalleFel;
                 contadorLinea++;
@@ -70,7 +70,7 @@ namespace CR.FacturaElectronica.Factura
                 {
                     Tarifa = impuestoSistema.Tarifa,
                     Monto = impuestoSistema.MontoImpuesto,
-                    Codigo = FacturaEnumeradores.ObtenerCodigoImpuesto(impuestoSistema.CodigoImpuesto)
+                    Codigo = ModFunciones.ObtenerValorEnumerador(impuestoSistema.CodigoImpuesto, ImpuestoTypeCodigo.Item99)
                 };
                 AsignarAtributosExoneracion(impuestoTypeFel, detalleSistema);
                 arrImpuestos[i] = impuestoTypeFel;
@@ -84,7 +84,7 @@ namespace CR.FacturaElectronica.Factura
         {
             if (!detalleSistema.EsExonerado) return;
             var exoneracion = mapper.Map<ExoneracionType>(detalleSistema.Exoneracion);
-            exoneracion.TipoDocumento = FacturaEnumeradores.ObtenerTipoDocumento(detalleSistema.Exoneracion.TipoDocumento);
+            exoneracion.TipoDocumento = ModFunciones.ObtenerValorEnumerador(detalleSistema.Exoneracion.TipoDocumento, ExoneracionTypeTipoDocumento.Item99);
             exoneracion.PorcentajeCompra = Convert.ToInt32(detalleSistema.Exoneracion.PorcentajeCompra).ToString();
             impuestoFel.Exoneracion = exoneracion;
         }
@@ -95,7 +95,7 @@ namespace CR.FacturaElectronica.Factura
             respuesta[0] = new CodigoType()
             {
                 Codigo = codigoDetalleSistema,
-                Tipo = FacturaEnumeradores.ObtenerTipoCodigoDetalle(codTipoDetalleSistema)
+                Tipo = ModFunciones.ObtenerValorEnumerador(codTipoDetalleSistema, CodigoTypeTipo.Item99) 
             };
             return respuesta;
         }
