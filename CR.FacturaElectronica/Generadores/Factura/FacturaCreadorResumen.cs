@@ -20,6 +20,7 @@ namespace CR.FacturaElectronica.Factura
 
             mapper = new Mapper(config);
         }
+
         public FacturaElectronicaResumenFactura CrearResumen(Resumen resumenSistema)
         {
             var resumenFel = mapper.Map<FacturaElectronicaResumenFactura>(resumenSistema);

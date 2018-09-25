@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CR.FacturaElectronica.Generadores.Interfaces
 {
-    internal interface IDefinidorDetalles<T>
+    internal interface ICreadorDetalles<T>
     {
         T[] DefinirDetalles(List<LineaDetalle> detallesDelSistema);
     }

@@ -121,7 +121,7 @@ namespace CR.FacturaElectronica.Test
                 LineasDetalle = detalles(),
                 Sucursal = 1,
                 Terminal = 1,
-                TipoDocumento = Shared.EnumeradoresFEL.enmTipoDocumento.Factura,
+                TipoDocumento = Shared.EnumeradoresFEL.enmTipoDocumento.Tiquete,
                 Resumen = new Resumen()
                 {
                     Moneda = "CRC",

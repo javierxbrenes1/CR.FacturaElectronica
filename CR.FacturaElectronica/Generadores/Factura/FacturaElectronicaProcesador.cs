@@ -36,12 +36,12 @@ namespace CR.FacturaElectronica.Factura
             factura.CondicionVenta = ModFunciones.ObtenerValorEnumerador(Encabezado.CondicionVenta, FacturaElectronicaCondicionVenta.Item99);
             factura.PlazoCredito = Encabezado.PlazoCredito;
             factura.MedioPago = AsignarMediosPago();
-            factura.DetalleServicio = new FacturaDefinidorDetalles().DefinirDetalles(Productos);
+            factura.DetalleServicio = new FacturaCreadorDetalles().DefinirDetalles(Productos);
             factura.ResumenFactura = new FacturaCreadorResumen().CrearResumen(Resumen);
             factura.InformacionReferencia = new FacturaCreadorDocumentoReferencia().CrearArregloReferencias(DocsReferencia);
             factura.Normativa = AsignarNormativa();
             factura.Otros = new FacturaCreadorSeccionOtros().CrearSeccionDeOtros(SeccionOtros);
-            return ModFunciones.ObtenerXMLComoString<FacturaElectronica>(factura);
+            return ModFunciones.ObtenerXMLComoString(factura);
         }
 
         private FacturaElectronicaMedioPago[] AsignarMediosPago()

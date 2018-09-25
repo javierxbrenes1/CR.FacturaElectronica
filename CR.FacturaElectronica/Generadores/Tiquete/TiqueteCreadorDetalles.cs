@@ -1,60 +1,33 @@
 ﻿using AutoMapper;
 using CR.FacturaElectronica.Entidades;
-using CR.FacturaElectronica.Factura;
 using CR.FacturaElectronica.Generadores.Interfaces;
 using CR.FacturaElectronica.Shared;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CR.FacturaElectronica.Factura
+namespace CR.FacturaElectronica.Tiquete
 {
-    internal class FacturaDefinidorDetalles : IDefinidorDetalles<FacturaElectronicaLineaDetalle>
+    internal class TiqueteCreadorDetalles : ICreadorDetalles<TiqueteElectronicoLineaDetalle>
     {
         private readonly IMapper mapper;
 
-        public FacturaDefinidorDetalles()
+        public TiqueteCreadorDetalles()
         {
             mapper = ConfigurarAutoMapper();
         }
 
-        private Mapper ConfigurarAutoMapper()
+        public TiqueteElectronicoLineaDetalle[] DefinirDetalles(List<LineaDetalle> detallesDelSistema)
         {
-            var config = new MapperConfiguration(t =>
+            TiqueteElectronicoLineaDetalle lnDetalle;
+            var arrDetalles = new TiqueteElectronicoLineaDetalle[detallesDelSistema.Count];
+            for (int i = 0; i < detallesDelSistema.Count; i++)
             {
-                t.CreateMap<LineaDetalle, FacturaElectronicaLineaDetalle>()
-                .ForMember(r => r.Codigo, o => o.Ignore())
-                .ForMember(r => r.UnidadMedida, o => o.Ignore())
-                .ForMember(r => r.Impuesto, o => o.Ignore())
-                .ForMember(r => r.MontoDescuentoSpecified, o => o.MapFrom(z => z.DebeMostrarDescuento))
-                .ForMember(r => r.NaturalezaDescuentoSpecified, o => o.MapFrom(z => z.DebeMostrarDescuento))
-                ;
-                t.CreateMap<Exoneracion, ExoneracionType>()
-                .ForMember(r => r.TipoDocumento, o => o.Ignore())
-                .ForMember(r => r.PorcentajeCompra, o => o.Ignore())
-                .ForMember(r => r.MontoImpuesto, o => o.MapFrom(z => z.MontoImpuestoExon));
-            });
-
-            return new Mapper(config);
-        }
-
-        public FacturaElectronicaLineaDetalle[] DefinirDetalles(List<LineaDetalle> detallesDelSistema)
-        {
-            FacturaElectronicaLineaDetalle detalleFel;
-            var contadorLinea = 0;
-            var arrDetalles = new FacturaElectronicaLineaDetalle[detallesDelSistema.Count];
-            foreach (var detalleSistema in detallesDelSistema) {
-
-                detalleFel = mapper.Map<FacturaElectronicaLineaDetalle>(detalleSistema);
-                detalleFel.Codigo = GetCodigoDetalle(detalleSistema.Codigo, detalleSistema.TipoCodigo);
-                detalleFel.UnidadMedida = ModFunciones.ObtenerValorEnumerador(detalleSistema.UnidadMedida, UnidadMedidaType.Unid);
-                detalleFel.Impuesto = GetImpuesto(detalleSistema);
-                arrDetalles[contadorLinea] = detalleFel;
-                contadorLinea++;
+                lnDetalle = mapper.Map<TiqueteElectronicoLineaDetalle>(detallesDelSistema[i]);
+                lnDetalle.Codigo = GetCodigoDetalle(detallesDelSistema[i].Codigo, detallesDelSistema[i].TipoCodigo);
+                lnDetalle.UnidadMedida = ModFunciones.ObtenerValorEnumerador(detallesDelSistema[i].UnidadMedida, UnidadMedidaType.Unid);
+                lnDetalle.Impuesto = GetImpuesto(detallesDelSistema[i]);
+                arrDetalles[i] = lnDetalle;
             }
-
             return arrDetalles;
         }
 
@@ -76,8 +49,6 @@ namespace CR.FacturaElectronica.Factura
                 arrImpuestos[i] = impuestoTypeFel;
             }
             return arrImpuestos;
-
-
         }
 
         private void AsignarAtributosExoneracion(ImpuestoType impuestoFel, LineaDetalle detalleSistema)
@@ -95,12 +66,29 @@ namespace CR.FacturaElectronica.Factura
             respuesta[0] = new CodigoType()
             {
                 Codigo = codigoDetalleSistema,
-                Tipo = ModFunciones.ObtenerValorEnumerador(codTipoDetalleSistema, CodigoTypeTipo.Item99) 
+                Tipo = ModFunciones.ObtenerValorEnumerador(codTipoDetalleSistema, CodigoTypeTipo.Item99)
             };
             return respuesta;
         }
 
-        
-    }
+        private Mapper ConfigurarAutoMapper()
+        {
+            var config = new MapperConfiguration(t =>
+            {
+                t.CreateMap<LineaDetalle, TiqueteElectronicoLineaDetalle>()
+                .ForMember(r => r.Codigo, o => o.Ignore())
+                .ForMember(r => r.UnidadMedida, o => o.Ignore())
+                .ForMember(r => r.Impuesto, o => o.Ignore())
+                .ForMember(r => r.MontoDescuentoSpecified, o => o.MapFrom(z => z.DebeMostrarDescuento))
+                .ForMember(r => r.NaturalezaDescuentoSpecified, o => o.MapFrom(z => z.DebeMostrarDescuento))
+                ;
+                t.CreateMap<Exoneracion, ExoneracionType>()
+                .ForMember(r => r.TipoDocumento, o => o.Ignore())
+                .ForMember(r => r.PorcentajeCompra, o => o.Ignore())
+                .ForMember(r => r.MontoImpuesto, o => o.MapFrom(z => z.MontoImpuestoExon));
+            });
 
+            return new Mapper(config);
+        }
+    }
 }
