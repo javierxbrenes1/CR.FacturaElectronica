@@ -3,7 +3,7 @@
 
 namespace CR.FacturaElectronica.Entidades
 {
-    public class DocumentoReferencia
+    public class DocumentoReferenciaSistema
     {
         public string TipoDoc { get; set; }
         public string Numero { get; set; }

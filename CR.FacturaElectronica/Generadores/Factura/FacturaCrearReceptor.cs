@@ -8,15 +8,15 @@ using CR.FacturaElectronica.Shared;
 
 namespace CR.FacturaElectronica.Factura
 {
-    internal class FacturaCreadorReceptor : ICreadorPersona<ReceptorType>
+    internal class FacturaCreadorReceptor 
     {
-        public ReceptorType CrearPersona(Persona personaDelSistema)
+        public CR.FEL.Detalles.Receptor CrearPersona(Persona personaDelSistema)
         {
 
             //Valida si el receptor es tipo cliente general no lo incluye
             if (personaDelSistema == null) return null;
 
-            var receptor = new ReceptorType();
+            var receptor = new CR.FEL.Detalles.Receptor();
 
             receptor.Nombre = personaDelSistema.Nombre;
             //Si el id es extranjero
@@ -26,9 +26,9 @@ namespace CR.FacturaElectronica.Factura
             }
             else
             {
-                receptor.Identificacion = new IdentificacionType()
+                receptor.Identificacion = new CR.FEL.Detalles.Identificacion()
                 {
-                    Tipo = ModFunciones.ObtenerValorEnumerador(personaDelSistema.TipoIdentificacion, IdentificacionTypeTipo.Item04),
+                    Tipo = ModFunciones.ObtenerValorEnumerador(personaDelSistema.TipoIdentificacion, CR.FEL.Detalles.Identificacion.IdentificacionTipo.Item04),
                     Numero = personaDelSistema.NumeroIdentificacion
                 };
             }
@@ -45,10 +45,10 @@ namespace CR.FacturaElectronica.Factura
             return receptor;
         }
 
-        private void DefinirDireccion(ReceptorType receptor,Persona personaDelSistema) {
+        private void DefinirDireccion(CR.FEL.Detalles.Receptor receptor,Persona personaDelSistema) {
             if (!string.IsNullOrEmpty(personaDelSistema.Provincia))
             {
-                receptor.Ubicacion = new UbicacionType();
+                receptor.Ubicacion = new CR.FEL.Detalles.Ubicacion();
                 receptor.Ubicacion.Provincia = personaDelSistema.Provincia;
                 receptor.Ubicacion.Canton = personaDelSistema.Canton;
                 receptor.Ubicacion.Distrito = personaDelSistema.Distrito;
@@ -57,11 +57,11 @@ namespace CR.FacturaElectronica.Factura
             }
         }
 
-        private void DefinirTelefono(ReceptorType receptor, Telefono telefonoSistema, bool esFax = false)
+        private void DefinirTelefono(CR.FEL.Detalles.Receptor receptor, Telefono telefonoSistema, bool esFax = false)
         {
             if (telefonoSistema != null)
             {
-                var telefonoType = new TelefonoType()
+                var telefonoType = new CR.FEL.Detalles.Telefono()
                 {
                     CodigoPais = telefonoSistema.CodigoArea,
                     NumTelefono = telefonoSistema.Numero

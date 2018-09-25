@@ -1,9 +1,7 @@
-﻿using CR.FacturaElectronica.Shared;
-using System;
+﻿using CR.FacturaElectronica.Generadores.Detalles;
+using CR.FacturaElectronica.Shared;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace CR.FacturaElectronica.Entidades
 {
@@ -18,8 +16,8 @@ namespace CR.FacturaElectronica.Entidades
 
         public Encabezado Encabezado { get; set; }
         public List<LineaDetalle> LineasDetalle { get; set; }
-        public Resumen Resumen { get; set; }
-        public List<DocumentoReferencia> DocumentosReferencia { get; set; }
+        public ResumenFactura Resumen { get; set; }
+        public List<DocumentoReferenciaSistema> DocumentosReferencia { get; set; }
 
         public Dictionary<string, string> SeccionOtros { get; set; }
 

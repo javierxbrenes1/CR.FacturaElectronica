@@ -6,7 +6,7 @@ using System;
 
 namespace CR.FacturaElectronica.Factura
 {
-    internal class FacturaCreadorResumen : ICreadorResumen<FacturaElectronicaResumenFactura>
+    internal class FacturaCreadorResumen
     {
         private readonly IMapper mapper;
 
@@ -14,40 +14,27 @@ namespace CR.FacturaElectronica.Factura
         {
             var config = new MapperConfiguration(t =>
             {
-                t.CreateMap<Resumen, FacturaElectronicaResumenFactura>()
+                t.CreateMap<Resumen, CR.FEL.Detalles.ResumenFactura>()
                 .ForMember(m=>m.CodigoMoneda, i=>i.Ignore());
             });
 
             mapper = new Mapper(config);
         }
 
-        public FacturaElectronicaResumenFactura CrearResumen(Resumen resumenSistema)
+        public CR.FEL.Detalles.ResumenFactura CrearResumen(Resumen resumenSistema)
         {
-            var resumenFel = mapper.Map<FacturaElectronicaResumenFactura>(resumenSistema);
+            var resumenFel = mapper.Map<CR.FEL.Detalles.ResumenFactura>(resumenSistema);
             try
             {
-                resumenFel.CodigoMoneda = (FacturaElectronicaResumenFacturaCodigoMoneda)Enum.Parse(typeof(FacturaElectronicaResumenFacturaCodigoMoneda), resumenSistema.Moneda);
+                resumenFel.CodigoMoneda = (CR.FEL.Detalles.ResumenFactura.Moneda)Enum.Parse(typeof(CR.FEL.Detalles.ResumenFactura.Moneda), resumenSistema.Moneda);
             }
             catch (Exception)
             {
-                resumenFel.CodigoMoneda = FacturaElectronicaResumenFacturaCodigoMoneda.CRC;
+                resumenFel.CodigoMoneda = CR.FEL.Detalles.ResumenFactura.Moneda.CRC;
             }
-            AsignarTrueABanderasDeDespliegue(resumenFel);
             return resumenFel;
         }
 
-        private void AsignarTrueABanderasDeDespliegue(FacturaElectronicaResumenFactura resumenFel)
-        {
-            resumenFel.CodigoMonedaSpecified = true;
-            resumenFel.TipoCambioSpecified = true;
-            resumenFel.TotalDescuentosSpecified = true;
-            resumenFel.TotalExentoSpecified = true;
-            resumenFel.TotalGravadoSpecified = true;
-            resumenFel.TotalImpuestoSpecified = true;
-            resumenFel.TotalMercanciasExentasSpecified = true;
-            resumenFel.TotalMercanciasGravadasSpecified = true;
-            resumenFel.TotalServExentosSpecified = true;
-            resumenFel.TotalServGravadosSpecified = true;
-        }
+      
     }
 }

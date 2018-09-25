@@ -19,7 +19,7 @@ namespace CR.FacturaElectronica.Factura
 
         public Resumen Resumen { get; set; }
 
-        public DocumentoReferencia[] DocsReferencia { get; set; }
+        public DocumentoReferenciaSistema[] DocsReferencia { get; set; }
 
         public Dictionary<string, string> SeccionOtros { get; set; }
 
@@ -27,13 +27,13 @@ namespace CR.FacturaElectronica.Factura
 
         public string CrearXML()
         {
-            var factura = new FacturaElectronica();
+            var factura = new CR.FEL.Encabezados.FacturaElectronica();
             factura.Clave = Encabezado.Clave;
             factura.NumeroConsecutivo = Encabezado.NumeroConsecutivo;
             factura.FechaEmision = Encabezado.FechaEmision;
             factura.Emisor = new FacturaCreadorEmisor().CrearPersona(Encabezado.Emisor);
             factura.Receptor = new FacturaCreadorReceptor().CrearPersona(Encabezado.Receptor);
-            factura.CondicionVenta = ModFunciones.ObtenerValorEnumerador(Encabezado.CondicionVenta, FacturaElectronicaCondicionVenta.Item99);
+            factura.CondicionVenta = ModFunciones.ObtenerValorEnumerador(Encabezado.CondicionVenta, CR.FEL.Detalles.Enumeradores.CondicionVenta.Item99);
             factura.PlazoCredito = Encabezado.PlazoCredito;
             factura.MedioPago = AsignarMediosPago();
             factura.DetalleServicio = new FacturaCreadorDetalles().DefinirDetalles(Productos);
@@ -44,19 +44,19 @@ namespace CR.FacturaElectronica.Factura
             return ModFunciones.ObtenerXMLComoString(factura);
         }
 
-        private FacturaElectronicaMedioPago[] AsignarMediosPago()
+        private CR.FEL.Detalles.Enumeradores.MedioPago[] AsignarMediosPago()
         {
-            var medioPagos = new FacturaElectronicaMedioPago[Encabezado.MediosPago.Length];
+            var medioPagos = new CR.FEL.Detalles.Enumeradores.MedioPago[Encabezado.MediosPago.Length];
             for (int i = 0; i < Encabezado.MediosPago.Length; i++)
             {
-                medioPagos[i] = ModFunciones.ObtenerValorEnumerador(Encabezado.MediosPago[i], FacturaElectronicaMedioPago.Item99);
+                medioPagos[i] = ModFunciones.ObtenerValorEnumerador(Encabezado.MediosPago[i], CR.FEL.Detalles.Enumeradores.MedioPago.Item99);
             }
             return medioPagos;
         }
 
-        private FacturaElectronicaNormativa AsignarNormativa()
+        private CR.FEL.Detalles.Normativa AsignarNormativa()
         {
-            var normativa = new FacturaElectronicaNormativa();
+            var normativa = new CR.FEL.Detalles.Normativa();
             normativa.NumeroResolucion = Encabezado.NormativaNombre;
             normativa.FechaResolucion = Encabezado.NormativaFecha;
             return normativa;

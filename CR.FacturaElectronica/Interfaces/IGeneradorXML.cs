@@ -1,27 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Data;
+﻿using System.Collections.Generic;
 using CR.FacturaElectronica.Entidades;
+using CR.FacturaElectronica.Generadores.Detalles;
+using CR.FacturaElectronica.Shared;
 
 namespace CR.FacturaElectronica
 {
-    public interface IDocumentoProcesador
+    public interface IGeneradorXML
     {
 
         #region Propiedades
         
         List<LineaDetalle> Productos { get; set; }
         Encabezado Encabezado { get; set; }
-        Resumen Resumen { get; set; }
-        DocumentoReferencia[] DocsReferencia { get; set; }
+        ResumenFactura Resumen { get; set; }
+        DocumentoReferenciaSistema[] DocsReferencia { get; set; }
         Dictionary<string, string> SeccionOtros { get; set; }
 
         #endregion
 
         #region Procesos
-        string CrearXML();
+        string CrearXML(EnumeradoresFEL.enmTipoDocumento tipoDoc);
         #endregion
     }
 }

@@ -7,18 +7,19 @@ using System.Threading.Tasks;
 
 namespace CR.FacturaElectronica.Factura
 {
-    internal class FacturaCreadorSeccionOtros : ICreadorOtros<FacturaElectronicaOtros>
+    internal class FacturaCreadorSeccionOtros 
     {
-        public FacturaElectronicaOtros CrearSeccionDeOtros(Dictionary<string, string> argumentos)
+        public CR.FEL.Detalles.Otros CrearSeccionDeOtros(Dictionary<string, string> argumentos)
         {
             if (argumentos == null) return null;
-            var otros = new FacturaElectronicaOtros();
+            var otros = new CR.FEL.Detalles.Otros();
             
-            otros.OtroTexto = new FacturaElectronicaOtrosOtroTexto[argumentos.Count];
+            otros.OtroTexto = new CR.FEL.Detalles.OtrosOtroTexto[argumentos.Count];
             var contador = 0;
             argumentos.ToList().ForEach(t =>
             {
-                otros.OtroTexto[contador] = new FacturaElectronicaOtrosOtroTexto {
+                otros.OtroTexto[contador] = new CR.FEL.Detalles.OtrosOtroTexto
+                {
                     codigo = t.Key,
                     Value = t.Value
                 };

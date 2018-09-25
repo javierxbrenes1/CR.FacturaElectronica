@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using CR.FacturaElectronica.Entidades;
+using CR.FacturaElectronica.Generadores;
 using CR.FacturaElectronica.Interfaces;
 using CR.FacturaElectronica.Shared;
 
@@ -13,13 +14,11 @@ namespace CR.FacturaElectronica
     {
 
         private readonly ConfiguracionCreacionDocumentos _configuracion;
-        private readonly IDocumentoProcesadorFactory _generadorDocumentoFactory;
         private readonly IFirmadorElectronico _firmadorElectronico;
 
         public CreadorDocumentos(ConfiguracionCreacionDocumentos configuracion)
         {
             this._configuracion = configuracion;
-            this._generadorDocumentoFactory = new DocumentoProcesadorFactory();
             this._firmadorElectronico = new FirmadorElectronico(configuracion);
         }
 
@@ -36,13 +35,17 @@ namespace CR.FacturaElectronica
                     docParams.ConsecutivoSistema, docParams.TipoDocumento);
                 docParams.Encabezado.Clave = GenerarClave(docParams.Encabezado.NumeroConsecutivo, docParams.Encabezado.FechaEmision,
                     GeneraTokenSeguridad(8), docParams.EsUnReproceso);
-                var generador = _generadorDocumentoFactory.ResolverInstancia(docParams.TipoDocumento);
-                generador.Encabezado = docParams.Encabezado;
-                generador.DocsReferencia = docParams.DocumentosReferencia.ToArray();
-                generador.Productos = docParams.LineasDetalle;
-                generador.Resumen = docParams.Resumen;
-                generador.SeccionOtros = docParams.SeccionOtros;
-                var xml = generador.CrearXML();
+
+                var creadorXml = new GeneradorXML();
+
+                creadorXml.Encabezado = docParams.Encabezado;
+                creadorXml.DocsReferencia = docParams.DocumentosReferencia.ToArray();
+                creadorXml.Productos = docParams.LineasDetalle;
+                creadorXml.Resumen = docParams.Resumen;
+                creadorXml.SeccionOtros = docParams.SeccionOtros;
+
+                var xml = creadorXml.CrearXML(docParams.TipoDocumento);
+
                 var rutaGuardado = GuardarElXMlParaFirmarlo(docParams.Encabezado.Clave, xml);
                 respuesta.XmlDocCreado = _firmadorElectronico.FirmarDocumento(rutaGuardado);
                 respuesta.ConsecutivoDocCreado = docParams.Encabezado.NumeroConsecutivo;

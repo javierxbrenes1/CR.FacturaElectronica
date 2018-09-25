@@ -33,9 +33,6 @@
     <Reference Include="AutoMapper, Version=7.0.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.7.0.1\lib\net45\AutoMapper.dll</HintPath>
     </Reference>
-    <Reference Include="CR.FEL">
-      <HintPath>..\..\..\..\Desktop\CR.FEL.dll</HintPath>
-    </Reference>
     <Reference Include="FirmaXadesNet, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Debug\FirmaXadesNet.dll</HintPath>
@@ -63,42 +60,45 @@
     <Compile Include="Entidades\Generadores\DocumentoParametros.cs" />
     <Compile Include="Entidades\Generadores\DocumentoReferencia.cs" />
     <Compile Include="Entidades\Generadores\Encabezado.cs" />
-    <Compile Include="Entidades\Generadores\Exoneracion.cs" />
-    <Compile Include="Entidades\Generadores\Impuesto.cs" />
-    <Compile Include="Entidades\Generadores\Persona.cs" />
     <Compile Include="Entidades\Procesos\GetRespuestaConsultaHacienda.cs" />
     <Compile Include="Entidades\Procesos\PersonaDocumentoDto.cs" />
-    <Compile Include="Entidades\Generadores\LineaDetalle.cs" />
-    <Compile Include="Entidades\Generadores\Resumen.cs" />
-    <Compile Include="Entidades\Generadores\Telefono.cs" />
     <Compile Include="Entidades\Procesos\EstadoDocumentoDto.cs" />
     <Compile Include="Entidades\Procesos\DocumentoDto.cs" />
     <Compile Include="Entidades\Procesos\PostRespuestaEnvioHacienda.cs" />
     <Compile Include="Entidades\Procesos\TokenDto.cs" />
     <Compile Include="Estructuras\RespuestaCreacionDoc.cs" />
+    <Compile Include="Generadores\Detalles\Codigo.cs" />
+    <Compile Include="Generadores\Detalles\Emisor.cs" />
+    <Compile Include="Generadores\Detalles\Enumeradores.cs" />
+    <Compile Include="Generadores\Detalles\Exoneracion.cs" />
+    <Compile Include="Generadores\Detalles\Identificacion.cs" />
+    <Compile Include="Generadores\Detalles\Impuesto.cs" />
+    <Compile Include="Generadores\Detalles\InformacionReferencia.cs" />
+    <Compile Include="Generadores\Detalles\LineaDetalle.cs" />
+    <Compile Include="Generadores\Detalles\Normativa.cs" />
+    <Compile Include="Generadores\Detalles\Otros.cs" />
+    <Compile Include="Generadores\Detalles\OtrosOtroContenido.cs" />
+    <Compile Include="Generadores\Detalles\OtrosOtroTexto.cs" />
+    <Compile Include="Generadores\Detalles\Receptor.cs" />
+    <Compile Include="Generadores\Detalles\ResumenFactura.cs" />
+    <Compile Include="Generadores\Detalles\Telefono.cs" />
+    <Compile Include="Generadores\Detalles\Ubicacion.cs" />
+    <Compile Include="Generadores\Encabezados\FacturaElectronica.cs" />
+    <Compile Include="Generadores\Encabezados\NotaCreditoElectronica.cs" />
+    <Compile Include="Generadores\Encabezados\NotaDebitoElectronica.cs" />
+    <Compile Include="Generadores\Encabezados\TiqueteElectronico.cs" />
     <Compile Include="Generadores\Factura\FacturaCreadorDocumentoReferencia.cs" />
     <Compile Include="Generadores\Factura\FacturaCreadorEmisor.cs" />
     <Compile Include="Generadores\Factura\FacturaCreadorResumen.cs" />
     <Compile Include="Generadores\Factura\FacturaCreadorSeccionOtros.cs" />
     <Compile Include="Generadores\Factura\FacturaCrearReceptor.cs" />
-    <Compile Include="Generadores\Factura\FacturaCreadorDetalles.cs" />
-    <Compile Include="Generadores\Interfaces\ICreadorDocumentoReferencia.cs" />
-    <Compile Include="Generadores\Interfaces\ICreadorOtros.cs" />
-    <Compile Include="Generadores\Interfaces\ICreadorPersona.cs" />
-    <Compile Include="Generadores\Interfaces\ICreadorResumen.cs" />
-    <Compile Include="Generadores\Interfaces\ICreadorDetalles.cs" />
-    <Compile Include="Generadores\Tiquete\TiqueteCreadorDetalles.cs" />
-    <Compile Include="Generadores\Tiquete\TiqueteCreadorDocumentoReferencia.cs" />
-    <Compile Include="Generadores\Tiquete\TiqueteCreadorEmisor.cs" />
-    <Compile Include="Generadores\Tiquete\TiqueteCreadorResumen.cs" />
-    <Compile Include="Generadores\Tiquete\TiqueteCreadorSeccionOtros.cs" />
-    <Compile Include="Generadores\Tiquete\TiqueteCreadorReceptor.cs" />
+    <Compile Include="Generadores\Factura\CreadorDetalles.cs" />
+    <Compile Include="Generadores\GeneradorXML.cs" />
+    <Compile Include="Interfaces\IEncabezado.cs" />
     <Compile Include="Implementacion\FirmadorElectronico.cs" />
     <Compile Include="Implementacion\CreadorDocumentos.cs" />
-    <Compile Include="Implementacion\DocumentoProcesadorFactory.cs" />
-    <Compile Include="Interfaces\IDocumentoProcesador.cs" />
+    <Compile Include="Interfaces\IGeneradorXML.cs" />
     <Compile Include="Interfaces\IFirmadorElectronico.cs" />
-    <Compile Include="Interfaces\IDocumentoProcesadorFactory.cs" />
     <Compile Include="Interfaces\ICreadorDocumentos.cs" />
     <Compile Include="Generadores\Factura\FacturaElectronicaProcesador.cs" />
     <Compile Include="Generadores\Factura\FacturaElectronica_FR.cs">
@@ -106,18 +106,6 @@
     </Compile>
     <Compile Include="Generadores\Mensaje_Receptor\MensajeReceptor.cs" />
     <Compile Include="Generadores\Mensaje_Receptor\MensajeReceptorProcesador.cs" />
-    <Compile Include="Generadores\Nota_Credito\NotaCreditoElectronica_FR.cs">
-      <DependentUpon>NotaCreditoElectronica_FR.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="Generadores\Nota_Credito\NotaCreditoProcesador.cs" />
-    <Compile Include="Generadores\Nota_Debito\NotaDebitoElectronica_FR.cs">
-      <DependentUpon>NotaDebitoElectronica_FR.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="Generadores\Nota_Debito\NotaDebitoProcesador.cs" />
-    <Compile Include="Generadores\Tiquete\TiqueteElectronico_FR.cs">
-      <DependentUpon>TiqueteElectronico_FR.xsd</DependentUpon>
-    </Compile>
-    <Compile Include="Generadores\Tiquete\TiqueteProcesador.cs" />
     <Compile Include="Interfaces\IProceso.cs" />
     <Compile Include="NotGeneradorFoundException.cs" />
     <Compile Include="Procesos\ConectorHaciendaRest.cs" />
@@ -142,15 +130,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Generadores\Mensaje_Receptor\MensajeReceptor_4.2.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Generadores\Nota_Credito\NotaCreditoElectronica_FR.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Generadores\Nota_Debito\NotaDebitoElectronica_FR.xsd">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="Generadores\Tiquete\TiqueteElectronico_FR.xsd">
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />

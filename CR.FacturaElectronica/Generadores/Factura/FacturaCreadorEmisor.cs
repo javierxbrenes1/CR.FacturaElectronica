@@ -1,23 +1,23 @@
 ﻿using System;
 using CR.FacturaElectronica.Entidades;
 using CR.FacturaElectronica.Shared;
-
+using CR.FEL.Detalles;
 namespace CR.FacturaElectronica.Factura
 {
-    internal class FacturaCreadorEmisor : ICreadorPersona<EmisorType>
-    {
-        public EmisorType CrearPersona(Persona personaDelSistema)
+    internal class FacturaCreadorEmisor
+    { 
+        public Emisor CrearPersona(Persona personaDelSistema)
         {
-            var emisor = new EmisorType()
+            var emisor = new Emisor()
             {
                 Nombre = personaDelSistema.Nombre,
-                Identificacion = new IdentificacionType()
+                Identificacion = new Identificacion()
                 {
-                    Tipo = ModFunciones.ObtenerValorEnumerador(personaDelSistema.TipoIdentificacion, IdentificacionTypeTipo.Item04),
+                    Tipo = ModFunciones.ObtenerValorEnumerador(personaDelSistema.TipoIdentificacion, Identificacion.IdentificacionTipo.Item04),
                     Numero = personaDelSistema.NumeroIdentificacion
                 },
                 NombreComercial = personaDelSistema.NombreComercial,
-                Ubicacion = new UbicacionType()
+                Ubicacion = new Ubicacion()
                 {
                     Provincia = personaDelSistema.Provincia,
                     Canton = personaDelSistema.Canton,
@@ -33,11 +33,11 @@ namespace CR.FacturaElectronica.Factura
             return emisor;
         }
 
-        private void DefinirTelefono(EmisorType emisor, Telefono telefonoSistema, bool esFax = false) 
+        private void DefinirTelefono(Emisor emisor, CR.FacturaElectronica.Entidades.Telefono telefonoSistema, bool esFax = false) 
         {
             if (telefonoSistema != null)
             {
-                var telefonoType = new TelefonoType()
+                var telefonoType = new CR.FEL.Detalles.Telefono()
                 {
                     CodigoPais = telefonoSistema.CodigoArea,
                     NumTelefono = telefonoSistema.Numero
