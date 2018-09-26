@@ -1,10 +1,11 @@
 ﻿
+using CR.FacturaElectronica.Generadores.Detalles;
+
 namespace CR.FacturaElectronica.Entidades
 {
     public class ConfiguracionCreacionDocumentos
     {
-        public Persona EmisorInformacion { get; set; }
-
+        public Emisor EmisorInformacion { get; set; }
         public string LlaveCriptograficaRuta { get; set; }
         public string LlaveCriptograficaClave { get; set; }
         public string PoliticaDigest { get; set; }

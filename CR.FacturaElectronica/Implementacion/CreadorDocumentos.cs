@@ -39,8 +39,8 @@ namespace CR.FacturaElectronica
                 var creadorXml = new GeneradorXML();
 
                 creadorXml.Encabezado = docParams.Encabezado;
-                creadorXml.DocsReferencia = docParams.DocumentosReferencia.ToArray();
-                creadorXml.Productos = docParams.LineasDetalle;
+                creadorXml.DocsReferencia = docParams.DocumentosReferencia == null ? null : docParams.DocumentosReferencia.ToArray();
+                creadorXml.Detalles = new LineasDetalleParser().ParsearLineas(docParams.LineasDetalle);
                 creadorXml.Resumen = docParams.Resumen;
                 creadorXml.SeccionOtros = docParams.SeccionOtros;
 
@@ -56,7 +56,7 @@ namespace CR.FacturaElectronica
             catch (Exception ex)
             {
                 respuesta.ErrorMensaje = ex.Message;
-                
+
                 respuesta.EstadoDocumento = RespuestaCreacionDoc.enmEstadoDocumento.NoCreado;
                 respuesta.NuevoConsecutivoSistema = docParams.ConsecutivoSistema;
             }
@@ -94,7 +94,7 @@ namespace CR.FacturaElectronica
             var dia = fechaTransaccion.Day.ToString().PadLeft(2, '0');
             var mes = fechaTransaccion.Month.ToString().PadLeft(2, '0');
             var anno = fechaTransaccion.Year.ToString().Substring(2, 2);
-            var cedulaEmisor = _configuracion.EmisorInformacion.NumeroIdentificacion.PadLeft(12, '0');
+            var cedulaEmisor = _configuracion.EmisorInformacion.Identificacion.Numero.PadLeft(12, '0');
 
             var docSituacion = esUnReproceso ? 
                 EnumeradoresFEL.enmSituacionComprobante.Contingencia :

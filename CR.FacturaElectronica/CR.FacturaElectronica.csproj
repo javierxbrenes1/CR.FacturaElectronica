@@ -30,9 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AutoMapper, Version=7.0.1.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
-      <HintPath>..\packages\AutoMapper.7.0.1\lib\net45\AutoMapper.dll</HintPath>
-    </Reference>
     <Reference Include="FirmaXadesNet, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\Debug\FirmaXadesNet.dll</HintPath>
@@ -54,12 +51,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Entidades\ExoneracionSistema.cs" />
     <Compile Include="Entidades\Generadores\ConfiguracionEnvioDocumentosAReceptor.cs" />
     <Compile Include="Entidades\Generadores\ConfiguracionCreacionDocumentos.cs" />
     <Compile Include="Entidades\Generadores\ConfiguracionComunicacionHacienda.cs" />
     <Compile Include="Entidades\Generadores\DocumentoParametros.cs" />
     <Compile Include="Entidades\Generadores\DocumentoReferencia.cs" />
     <Compile Include="Entidades\Generadores\Encabezado.cs" />
+    <Compile Include="Entidades\ImpuestoSistema.cs" />
+    <Compile Include="Entidades\LineaDetalleSistema.cs" />
     <Compile Include="Entidades\Procesos\GetRespuestaConsultaHacienda.cs" />
     <Compile Include="Entidades\Procesos\PersonaDocumentoDto.cs" />
     <Compile Include="Entidades\Procesos\EstadoDocumentoDto.cs" />
@@ -87,23 +87,14 @@
     <Compile Include="Generadores\Encabezados\NotaCreditoElectronica.cs" />
     <Compile Include="Generadores\Encabezados\NotaDebitoElectronica.cs" />
     <Compile Include="Generadores\Encabezados\TiqueteElectronico.cs" />
-    <Compile Include="Generadores\Factura\FacturaCreadorDocumentoReferencia.cs" />
-    <Compile Include="Generadores\Factura\FacturaCreadorEmisor.cs" />
-    <Compile Include="Generadores\Factura\FacturaCreadorResumen.cs" />
-    <Compile Include="Generadores\Factura\FacturaCreadorSeccionOtros.cs" />
-    <Compile Include="Generadores\Factura\FacturaCrearReceptor.cs" />
-    <Compile Include="Generadores\Factura\CreadorDetalles.cs" />
     <Compile Include="Generadores\GeneradorXML.cs" />
+    <Compile Include="Generadores\LineasDetalleParser.cs" />
     <Compile Include="Interfaces\IEncabezado.cs" />
     <Compile Include="Implementacion\FirmadorElectronico.cs" />
     <Compile Include="Implementacion\CreadorDocumentos.cs" />
     <Compile Include="Interfaces\IGeneradorXML.cs" />
     <Compile Include="Interfaces\IFirmadorElectronico.cs" />
     <Compile Include="Interfaces\ICreadorDocumentos.cs" />
-    <Compile Include="Generadores\Factura\FacturaElectronicaProcesador.cs" />
-    <Compile Include="Generadores\Factura\FacturaElectronica_FR.cs">
-      <DependentUpon>FacturaElectronica_FR.xsd</DependentUpon>
-    </Compile>
     <Compile Include="Generadores\Mensaje_Receptor\MensajeReceptor.cs" />
     <Compile Include="Generadores\Mensaje_Receptor\MensajeReceptorProcesador.cs" />
     <Compile Include="Interfaces\IProceso.cs" />
@@ -125,9 +116,6 @@
   <ItemGroup>
     <None Include="config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Generadores\Factura\FacturaElectronica_FR.xsd">
-      <SubType>Designer</SubType>
     </None>
     <None Include="Generadores\Mensaje_Receptor\MensajeReceptor_4.2.xsd">
       <SubType>Designer</SubType>

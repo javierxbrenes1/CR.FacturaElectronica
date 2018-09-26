@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CR.FacturaElectronica.AD", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CR.FacturaElectronica.Test", "CR.FacturaElectronica.Test\CR.FacturaElectronica.Test.csproj", "{47BD82A8-03CE-44D0-A2D4-5322BF442E31}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CR.FacturaElectronica.WF", "CR.FacturaElectronica.WF\CR.FacturaElectronica.WF.csproj", "{681AA54A-DE4C-495C-80C3-D61A022E08B7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{47BD82A8-03CE-44D0-A2D4-5322BF442E31}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47BD82A8-03CE-44D0-A2D4-5322BF442E31}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47BD82A8-03CE-44D0-A2D4-5322BF442E31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{681AA54A-DE4C-495C-80C3-D61A022E08B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{681AA54A-DE4C-495C-80C3-D61A022E08B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{681AA54A-DE4C-495C-80C3-D61A022E08B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{681AA54A-DE4C-495C-80C3-D61A022E08B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

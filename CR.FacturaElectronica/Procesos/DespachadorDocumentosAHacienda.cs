@@ -34,7 +34,7 @@ namespace CR.FacturaElectronica.Procesos
             ConsultarIdpPorToken(tokenCancelacionRefrescamiento.Token);
             var resultadosLista = new List<PostRespuestaEnvioHacienda>();
             object blockObject = new object();
-            Parallel.ForEach(documentosAProcesar, doc =>
+            Parallel.ForEach(documentosAProcesar, CrearOpcionesParalelismo(), doc =>
             {
                 _conectorHacienda.TokenSeguridad = _idpConector.TokenInfo.access_token;
                 var resultadoAux = _conectorHacienda.EnviarDocumentoAHacienda(doc);
@@ -62,7 +62,12 @@ namespace CR.FacturaElectronica.Procesos
             }, token);
         }
 
-        
+        private ParallelOptions CrearOpcionesParalelismo()
+        {
+            var opciones = new ParallelOptions();
+            opciones.MaxDegreeOfParallelism = 4;
+            return opciones;
+        }
 
         private void ConfigurarConectorHacienda(ConfiguracionComunicacionHacienda configuracion)
         {

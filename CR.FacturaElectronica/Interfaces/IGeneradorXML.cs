@@ -10,7 +10,7 @@ namespace CR.FacturaElectronica
 
         #region Propiedades
         
-        List<LineaDetalle> Productos { get; set; }
+        List<LineaDetalle> Detalles { get; set; }
         Encabezado Encabezado { get; set; }
         ResumenFactura Resumen { get; set; }
         DocumentoReferenciaSistema[] DocsReferencia { get; set; }
