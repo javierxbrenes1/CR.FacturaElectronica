@@ -45,7 +45,6 @@ namespace CR.FacturaElectronica.Procesos
         {
             var respuesta = new PostRespuestaEnvioHacienda();
             respuesta.Clave = data.clave;
-
             var respuestaApi = PostDocumento(ConvertirObjetoAEnviarEnJson(data));
             respuesta.TramaRecibida = respuestaApi.Content.ReadAsStringAsync().Result;
             if (string.IsNullOrEmpty(respuesta.TramaRecibida)) respuesta.TramaRecibida = respuestaApi.ToString();
