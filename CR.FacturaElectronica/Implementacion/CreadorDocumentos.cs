@@ -67,12 +67,12 @@ namespace CR.FacturaElectronica
         {
             var ruta = _configuracion.RutaXMLRespaldos;
            if (string.IsNullOrEmpty(ruta))
-                ruta = $"{Environment.CurrentDirectory}\\XMLS" ;
+                ruta = string.Format("{0}\\XMLS", Environment.CurrentDirectory) ;
 
             if (!Directory.Exists(ruta))
                 Directory.CreateDirectory(ruta);
 
-            ruta = $"{ruta}\\{clave}.xml";
+            ruta = string.Format("{0}\\{1}.xml", ruta, clave);
             File.WriteAllText(ruta , xml);
             return ruta;
 
@@ -81,10 +81,10 @@ namespace CR.FacturaElectronica
         private string GenerarConsecutivo(int sucursal, int terminal, long consecutivo,
             EnumeradoresFEL.enmTipoDocumento tipoDocumento)
         {
-            return  $"{sucursal.ToString().PadLeft(3,'0')}" +
-                    $"{terminal.ToString().PadRight(5, '0')}" +
-                    $"{((int)tipoDocumento).ToString().PadLeft(2,'0')}" +
-                    $"{consecutivo.ToString().PadLeft(10,'0')}";
+            return string.Format("{0}{1}{2}{3}", sucursal.ToString().PadLeft(3, '0'), 
+                terminal.ToString().PadRight(5, '0'), ((int)tipoDocumento).ToString().PadLeft(2, '0'),
+                consecutivo.ToString().PadLeft(10, '0'));
+          
         }
 
 
@@ -101,7 +101,7 @@ namespace CR.FacturaElectronica
                 _configuracion.HayInternet ? EnumeradoresFEL.enmSituacionComprobante.Normal :
                 EnumeradoresFEL.enmSituacionComprobante.Sin_Internet;
 
-            return $"{Constantes.PAIS_CODIGO}{dia}{mes}{anno}{cedulaEmisor}{consecutivo}{(int)docSituacion}{codigoSeguridad}";
+            return Constantes.PAIS_CODIGO+dia+mes+anno+cedulaEmisor+consecutivo+(int)docSituacion+codigoSeguridad;
         }
 
         private string GeneraTokenSeguridad(int pvcTamaño)

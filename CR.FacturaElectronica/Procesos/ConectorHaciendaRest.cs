@@ -36,7 +36,7 @@ namespace CR.FacturaElectronica.Procesos
             using (HttpClient cliente = new HttpClient())
             {
                 cliente.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(TipoAutenticacion, TokenSeguridad);
-                var url = string.IsNullOrEmpty(urlAlmacenado) ? $"{Url}/{clave}" : urlAlmacenado;
+                var url = string.IsNullOrEmpty(urlAlmacenado) ? string.Format("{0}/{1}", Url, clave) : urlAlmacenado;
                 return cliente.GetAsync(url).Result;
             }
         }
