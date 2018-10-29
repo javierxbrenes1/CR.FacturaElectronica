@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using CR.FacturaElectronica.Entidades;
@@ -7,7 +8,7 @@ using CR.FacturaElectronica.Shared;
 
 namespace CR.FacturaElectronica.Procesos
 {
-    class DespachadorDocumentosAHacienda : IProceso<PostRespuestaEnvioHacienda, DocumentoDto>
+    public class DespachadorDocumentosAHacienda : IProceso<PostRespuestaEnvioHacienda, DocumentoDto>
     {
         #region Variables
         private readonly IdpConector _idpConector;
@@ -31,7 +32,7 @@ namespace CR.FacturaElectronica.Procesos
         {
             //ejecuta la llamada al idp
             var tokenCancelacionRefrescamiento = new CancellationTokenSource();
-            ConsultarIdpPorToken(tokenCancelacionRefrescamiento.Token);
+            _idpConector.ConsultarIdpPorToken(tokenCancelacionRefrescamiento.Token);
             var resultadosLista = new List<PostRespuestaEnvioHacienda>();
             object blockObject = new object();
             Parallel.ForEach(documentosAProcesar, CrearOpcionesParalelismo(), doc =>
@@ -49,18 +50,9 @@ namespace CR.FacturaElectronica.Procesos
             return resultadosLista;
         }
 
-        private void ConsultarIdpPorToken(CancellationToken token)
-        {
-            _idpConector.ObtenerToken();
-            var TaskTokenRefrescamiento = Task.Run(() => {
-                if (!token.IsCancellationRequested)
-                {
-                    Thread.Sleep(_idpConector.TokenInfo.refresh_expires_in - 40);
-                    _idpConector.ObtenerToken(true);
-                }
+       
 
-            }, token);
-        }
+
 
         private ParallelOptions CrearOpcionesParalelismo()
         {

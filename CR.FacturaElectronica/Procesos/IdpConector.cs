@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CR.FacturaElectronica.Procesos
@@ -30,7 +31,7 @@ namespace CR.FacturaElectronica.Procesos
 
                 var contenido = new FormUrlEncodedContent(ParametrosIdp(refrescarToken));
 
-                var respuestaApi = cliente.PostAsync("token", contenido).Result;
+                HttpResponseMessage respuestaApi = cliente.PostAsync("token", contenido).Result;
                 respuestaApi.EnsureSuccessStatusCode();
 
                 var contenidoJson = respuestaApi.Content.ReadAsStringAsync().Result;
@@ -43,7 +44,18 @@ namespace CR.FacturaElectronica.Procesos
         }
 
 
-        
+        public void ConsultarIdpPorToken(CancellationToken token)
+        {
+            ObtenerToken();
+            var TaskTokenRefrescamiento = Task.Run(() => {
+                if (!token.IsCancellationRequested)
+                {
+                    Thread.Sleep(new TimeSpan(0, 0, TokenInfo.refresh_expires_in - 40));
+                    ObtenerToken(true);
+                }
+
+            }, token);
+        }
 
         public bool CerrarSesionIdp()
         {

@@ -1,13 +1,14 @@
 ﻿using CR.FacturaElectronica.Entidades;
 using CR.FacturaElectronica.Interfaces;
 using CR.FacturaElectronica.Shared;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace CR.FacturaElectronica.Procesos
 {
-    class ConsultorDocumentosEnHacienda : IProceso<GetRespuestaConsultaHacienda, string>
+    public class ConsultorDocumentosEnHacienda : IProceso<GetRespuestaConsultaHacienda, string>
     {
         #region Variables
         private readonly IdpConector _idpConector;
@@ -25,7 +26,7 @@ namespace CR.FacturaElectronica.Procesos
         {
             //ejecuta la llamada al idp
             var tokenCancelacionRefrescamiento = new CancellationTokenSource();
-            ConsultarIdpPorToken(tokenCancelacionRefrescamiento.Token);
+            _idpConector.ConsultarIdpPorToken(tokenCancelacionRefrescamiento.Token);
             var resultadosLista = new List<GetRespuestaConsultaHacienda>();
             object blockObject = new object();
             Parallel.ForEach(documentosAProcesar, clave =>
@@ -42,21 +43,6 @@ namespace CR.FacturaElectronica.Procesos
             _idpConector.CerrarSesionIdp();
             return resultadosLista;
         }
-
-        private void ConsultarIdpPorToken(CancellationToken token)
-        {
-            _idpConector.ObtenerToken();
-            var TaskTokenRefrescamiento = Task.Run(() => {
-                if (!token.IsCancellationRequested)
-                {
-                    Thread.Sleep(_idpConector.TokenInfo.refresh_expires_in - 40);
-                    _idpConector.ObtenerToken(true);
-                }
-
-            }, token);
-        }
-
-
 
         private void ConfigurarConectorHacienda(ConfiguracionComunicacionHacienda configuracion)
         {
