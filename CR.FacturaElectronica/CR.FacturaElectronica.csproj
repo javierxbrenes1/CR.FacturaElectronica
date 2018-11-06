@@ -109,6 +109,7 @@
     <Compile Include="Procesos\DespachadorDocumentosAHacienda.cs" />
     <Compile Include="Procesos\DespachadorRespuestasAEmisores.cs" />
     <Compile Include="Procesos\IdpConector.cs" />
+    <Compile Include="Procesos\Validador.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shared\Constantes.cs" />
     <Compile Include="Shared\Enumeradores.cs" />

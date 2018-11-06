@@ -71,6 +71,7 @@ namespace CR.FacturaElectronica.Procesos
 
         private string ConvertirObjetoAEnviarEnJson(DocumentoDto documento)
         {
+            if (!Validador.esReceptorJsonEnvioValido(documento.receptor)) documento.receptor = null;
             documento.comprobanteXml = ConvertirStringABase64(documento.comprobanteXml);
 
             return Newtonsoft.Json.JsonConvert.SerializeObject(documento, 

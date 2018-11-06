@@ -31,7 +31,7 @@ namespace CR.FacturaElectronica.Test
                 },
                 Sucursal = 1,
                 Terminal = 1,
-                TipoDocumento = Shared.EnumeradoresFEL.enmTipoDocumento.NotaDebito,
+                TipoDocumento = Shared.EnumeradoresFEL.enmTipoDocumento.Tiquete,
                 LineasDetalle = new List<LineaDetalleSistema>(),
                 Resumen = new ResumenFactura {
                     CodigoMoneda = ResumenFactura.Moneda.CRC, 
@@ -41,6 +41,7 @@ namespace CR.FacturaElectronica.Test
                 }
             };
 
+            param.Encabezado.Receptor = new Receptor();
             param.LineasDetalle.Add(new LineaDetalleSistema {
                 Cantidad = 1,
                 Codigo = "121",

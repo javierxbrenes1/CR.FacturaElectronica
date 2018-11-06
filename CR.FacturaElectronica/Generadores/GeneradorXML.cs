@@ -6,6 +6,7 @@ using CR.FacturaElectronica.Interfaces;
 using CR.FacturaElectronica.Shared;
 using CR.FacturaElectronica.Generadores.Encabezados;
 using System.Linq;
+using CR.FacturaElectronica.Procesos;
 
 namespace CR.FacturaElectronica.Generadores
 {
@@ -24,7 +25,7 @@ namespace CR.FacturaElectronica.Generadores
             encDoc.NumeroConsecutivo = Encabezado.NumeroConsecutivo;
             encDoc.FechaEmision = Encabezado.FechaEmision;
             encDoc.Emisor = Encabezado.Emisor;
-            encDoc.Receptor = Encabezado.Receptor;
+            encDoc.Receptor = Validador.esReceptorValido(Encabezado.Receptor) ? Encabezado.Receptor : null;
             encDoc.CondicionVenta = ModFunciones.ObtenerValorEnumerador(Encabezado.CondicionVenta, 
                 Enumeradores.CondicionVenta.Item99);
             encDoc.PlazoCredito = Encabezado.PlazoCredito;
@@ -104,5 +105,7 @@ namespace CR.FacturaElectronica.Generadores
                     throw new NotSupportedException("Tipo de documento no soportado");
             }
         }
+
+
     }
 }
