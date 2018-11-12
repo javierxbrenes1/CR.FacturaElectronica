@@ -44,6 +44,8 @@ namespace CR.FacturaElectronica.Procesos
 
         public PostRespuestaEnvioHacienda EnviarDocumentoAHacienda(DocumentoDto data)
         {
+
+            if (!Validador.esReceptorJsonEnvioValido(data.receptor))  data.receptor = null;
             var respuesta = new PostRespuestaEnvioHacienda();
             respuesta.Clave = data.clave;
             var jsonEnvio = ConvertirObjetoAEnviarEnJson(data);

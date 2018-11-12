@@ -1,15 +1,12 @@
 ﻿using CR.FacturaElectronica.Entidades;
 using CR.FacturaElectronica.Generadores.Detalles;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CR.FacturaElectronica.Procesos
 {
     public class Validador
     {
+
         public static bool esReceptorValido(Receptor receptor)
         {
             if (receptor.Identificacion == null) return false;
@@ -23,5 +20,13 @@ namespace CR.FacturaElectronica.Procesos
             if (persona.numeroIdentificacion == null || persona.tipoIdentificacion == null) return false;
             return true;
         }
+
+        public static bool HayImpuestosDeSistema(List<ImpuestoSistema> impuestos)
+        {
+            if (impuestos == null) return false;
+            if (impuestos.Count <= 0) return false;
+            return true;
+        }
+
     }
 }
