@@ -1,5 +1,6 @@
 ﻿using CR.FacturaElectronica.Entidades;
 using CR.FacturaElectronica.Generadores.Detalles;
+using CR.FacturaElectronica.Procesos;
 using CR.FacturaElectronica.Shared;
 using System;
 using System.Collections.Generic;
@@ -49,6 +50,7 @@ namespace CR.FacturaElectronica.Generadores
 
         private void ParsearImpuesto(LineaDetalle lnFel, LineaDetalleSistema linea)
         {
+            if(!Validador.HayImpuestosDeSistema(linea.Impuesto)) return;
             var imp = new List<Impuesto>();
             linea.Impuesto.ForEach(i =>
             {

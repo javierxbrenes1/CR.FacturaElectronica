@@ -61,6 +61,7 @@
     <Compile Include="Entidades\Generadores\ConfiguracionComunicacionHacienda.cs" />
     <Compile Include="Entidades\Generadores\DocumentoParametros.cs" />
     <Compile Include="Entidades\Generadores\DocumentoReferencia.cs" />
+    <Compile Include="Entidades\Generadores\DocumentoRespuestaParametros.cs" />
     <Compile Include="Entidades\Generadores\Encabezado.cs" />
     <Compile Include="Entidades\ImpuestoSistema.cs" />
     <Compile Include="Entidades\LineaDetalleSistema.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="Generadores\Encabezados\NotaDebitoElectronica.cs" />
     <Compile Include="Generadores\Encabezados\TiqueteElectronico.cs" />
     <Compile Include="Generadores\GeneradorXML.cs" />
+    <Compile Include="Generadores\GeneradorXMLRespuestas.cs" />
     <Compile Include="Generadores\LineasDetalleParser.cs" />
     <Compile Include="Interfaces\IEncabezado.cs" />
     <Compile Include="Implementacion\FirmadorElectronico.cs" />
@@ -109,6 +111,7 @@
     <Compile Include="Procesos\DespachadorDocumentosAHacienda.cs" />
     <Compile Include="Procesos\DespachadorRespuestasAEmisores.cs" />
     <Compile Include="Procesos\IdpConector.cs" />
+    <Compile Include="Procesos\Validador.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shared\Constantes.cs" />
     <Compile Include="Shared\Enumeradores.cs" />

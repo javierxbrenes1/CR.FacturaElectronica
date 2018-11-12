@@ -13,7 +13,7 @@ namespace CR.FacturaElectronica.Test
             try
             {
 
-                //new DespachadorTest().Ejecutar();
+                new DespachadorTest().Ejecutar();
                 new ConsultorTest().Consultar("50622101800030385010000100001010000000493140264212");
 
                 var generador = new GenerarDocumentoElectronico();

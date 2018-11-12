@@ -35,10 +35,7 @@ namespace CR.FacturaElectronica.Test
                      numeroIdentificacion = "304810266",
                      tipoIdentificacion = "02"
                 },
-                receptor = new PersonaDocumentoDto { //la info del receptor
-                    numeroIdentificacion = "909990999",
-                    tipoIdentificacion = "02"
-                },
+                
                 fecha = DateTime.Now.ToString("yyyy-MM-dd'T'HH:mm:ssZ") //la fecha de la factura-> cuando la factura se hizo
             };
             listadocs.Add(doc);

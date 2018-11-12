@@ -75,8 +75,8 @@ namespace CR.FacturaElectronica.Test
                 AlmacenarXMLsEnRutaRespaldos = true,
                 HayInternet = true,
                 LlaveCriptograficaClave = "1234",
-                LlaveCriptograficaRuta = @"E:\FEL\010956066419.p12",
-                RutaXMLRespaldos = @"E:\FEL\xmls",
+                LlaveCriptograficaRuta = @"E:\FEL-Params\010956066419.p12",
+                RutaXMLRespaldos = @"E:\FEL-Params\xmls",
                 PoliticaDigest = "Nzk0MTgxMmYxYTNiNDlhYWIxNjkxZjgyMTk0ZTQzMGEzNTFjZTc1ZTA2M2EyMzk0ZjUyZDEyOWIyZTU2ZWM3MQ==",
                 Politica = "https://tribunet.hacienda.go.cr/docs/esquemas/2016/v4.2/ResolucionComprobantesElectronicosDGT-R-48-2016_4.2.pdf",
 
