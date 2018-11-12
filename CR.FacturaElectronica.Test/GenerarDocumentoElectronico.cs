@@ -21,7 +21,7 @@ namespace CR.FacturaElectronica.Test
         {
             var param = new DocumentoParametros
             {
-                ConsecutivoSistema = 1,
+                ConsecutivoSistema = 2,
                 Encabezado = new Encabezado {
                     CondicionVenta = "02",
                     MediosPago = new string[] { "01","02" },

@@ -74,6 +74,33 @@ namespace CR.FacturaElectronica.Shared
             XmlEnumAttribute att = (XmlEnumAttribute)info.GetCustomAttributes(typeof(XmlEnumAttribute), false)[0];
             return att.Name;
         }
+
+        public static string ObtenerDatosEntre(string recurso, string desde, string hasta)
+        {
+            int vlnStart, vlnEnd;
+            try
+            {
+                //Si el texto contiene las llaves
+                if (recurso.Contains(desde) && recurso.Contains(hasta))
+                {
+                    //Obtiene la posicion inicial
+                    vlnStart = recurso.IndexOf(desde, 0) + desde.Length;
+                    //Obtiene la posicion final
+                    vlnEnd = recurso.IndexOf(hasta, vlnStart);
+                    //Retorna el valor entre llaves
+                    return recurso.Substring(vlnStart, vlnEnd - vlnStart);
+                }
+                else
+                {
+                    return "";
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 
     

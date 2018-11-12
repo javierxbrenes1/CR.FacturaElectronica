@@ -10,6 +10,8 @@ namespace CR.FacturaElectronica.Entidades
     {
         public bool ConsultaExitosa { get; set; }
         public string Mensaje { get; set; }
+        public string DetalleMensajeXML { get; set; }
+        public string CodigoMensajeXML { get; set; }
         public EstadoDocumentoDto Estado { get; set; }
     }
 }

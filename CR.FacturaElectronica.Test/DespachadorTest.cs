@@ -2,6 +2,7 @@
 using CR.FacturaElectronica.Procesos;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,13 +30,13 @@ namespace CR.FacturaElectronica.Test
 
             List<DocumentoDto> listadocs = new List<DocumentoDto>();
             DocumentoDto doc = new DocumentoDto {
-                clave = "50622101800030385010000100001010000000493140264212", //la clave de 50 caracteres
-                comprobanteXml = "<Tiquete Electronico></TiqueteElectronico>", //el comprobante en formato XML
+                clave = "50611111800010956066400110000040000000002198999075", //la clave de 50 caracteres
+                comprobanteXml = obtenerXML("50611111800010956066400110000040000000002198999075"),
                 emisor = new PersonaDocumentoDto { //la informacion del emisor
                      numeroIdentificacion = "304810266",
                      tipoIdentificacion = "02"
                 },
-                receptor = new PersonaDocumentoDto (),
+               // receptor = new PersonaDocumentoDto (),
                 fecha = DateTime.Now.ToString("yyyy-MM-dd'T'HH:mm:ssZ") //la fecha de la factura-> cuando la factura se hizo
             };
             listadocs.Add(doc);
@@ -43,6 +44,13 @@ namespace CR.FacturaElectronica.Test
             despechador.EjecutarProceso(listadocs);
 
 
+        }
+
+        public string obtenerXML(string clave)
+        {
+            using (StreamReader lector = new StreamReader($"E:\\FEL\\xmls\\{clave}.xml")) {
+                return lector.ReadToEnd();
+            }
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using CR.FacturaElectronica.Entidades;
+using CR.FacturaElectronica.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -96,7 +97,11 @@ namespace CR.FacturaElectronica.Procesos
                 var jsonRespuesta = respuestaApi.Content.ReadAsStringAsync().Result;
                 respuesta.Estado = Newtonsoft.Json.JsonConvert.DeserializeObject<EstadoDocumentoDto>(jsonRespuesta);
                 if (!string.IsNullOrEmpty(respuesta.Estado.respuestaXml))
+                {
                     respuesta.Estado.respuestaXml = DecodificarBase64(respuesta.Estado.respuestaXml);
+                    respuesta.DetalleMensajeXML = ModFunciones.ObtenerDatosEntre(respuesta.Estado.respuestaXml, "<DetalleMensaje>", "</DetalleMensaje>");
+                    respuesta.CodigoMensajeXML = ModFunciones.ObtenerDatosEntre(respuesta.Estado.respuestaXml, "<Mensaje>", "</Mensaje>");
+                }
             }
             else
             {

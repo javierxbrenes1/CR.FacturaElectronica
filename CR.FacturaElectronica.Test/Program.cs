@@ -13,12 +13,12 @@ namespace CR.FacturaElectronica.Test
             try
             {
 
-                new DespachadorTest().Ejecutar();
-                //new ConsultorTest().Consultar("50622101800030385010000100001010000000493140264212");
+                //new DespachadorTest().Ejecutar();
+                new ConsultorTest().Consultar("50611111800010956066400110000040000000002198999075");
 
-                var generador = new GenerarDocumentoElectronico();
+                //var generador = new GenerarDocumentoElectronico();
 
-                generador.GenerarXMl();
+                //generador.GenerarXMl();
                 
             }
             catch (Exception ex)
