@@ -7,8 +7,6 @@ namespace CR.FacturaElectronica.Entidades
 {
     public class DocumentoParametros
     {
-        
-
         public int Terminal { get; set; }
         public int Sucursal { get; set; }
         public long ConsecutivoSistema { get; set; }

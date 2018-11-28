@@ -52,6 +52,7 @@ namespace CR.FacturaElectronica
                 respuesta.ClaveDocCreada = docParams.Encabezado.Clave;
                 respuesta.EstadoDocumento = RespuestaCreacionDoc.enmEstadoDocumento.CreadoCorrectamente;
                 respuesta.NuevoConsecutivoSistema = docParams.ConsecutivoSistema + 1;
+                respuesta.FechaCreacion = docParams.Encabezado.FechaEmision;
             }
             catch (Exception ex)
             {

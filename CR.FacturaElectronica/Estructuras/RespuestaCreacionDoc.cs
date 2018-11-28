@@ -1,4 +1,5 @@
 ﻿using CR.FacturaElectronica.Entidades;
+using System;
 
 namespace CR.FacturaElectronica
 {
@@ -17,6 +18,7 @@ namespace CR.FacturaElectronica
         public string ErrorMensaje;
         public long NuevoConsecutivoSistema;
         public enmEstadoDocumento EstadoDocumento;
+        public DateTime FechaCreacion { get; set; }
 
     }
 }
